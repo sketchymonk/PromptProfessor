@@ -6,28 +6,128 @@
 <title>Boardroom Challenge · Prompt Professor</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,900;1,500;1,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,900;1,500;1,700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles/tokens.css">
 <link rel="stylesheet" href="styles/luxe.css">
 <style>
-  .page-wrap { max-width: 1100px; margin: 0 auto; padding: var(--space-10) var(--space-8) var(--space-24); }
-  .page-hdr { margin-bottom: var(--space-10); }
+  body { background: var(--bg-base); }
 
-  /* ====== Boardroom stage — a "moment of weight" per luxe rules ====== */
+  /* ----- Shared landing-register chrome ----- */
+  .landing-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: var(--space-5) var(--space-12);
+    border-bottom: 1px solid var(--border-subtle);
+    position: sticky; top: 0; z-index: var(--z-sticky);
+    backdrop-filter: blur(12px);
+    background: color-mix(in oklab, var(--bg-base) 90%, transparent);
+  }
+  .landing-nav-brand { display: flex; align-items: center; gap: var(--space-3); }
+  .landing-nav-links { display: flex; gap: var(--space-6); font-size: var(--text-sm); color: var(--text-secondary); }
+  .landing-nav-links a:hover { color: var(--gold-600); }
+  .landing-nav-meta { display: flex; align-items: center; gap: var(--space-4); font-size: var(--text-sm); color: var(--text-tertiary); }
+  .landing-nav-meta .streak { color: var(--gold-700); font-weight: 600; }
+
+  .crumb-strip {
+    max-width: 1200px; margin: 0 auto;
+    padding: var(--space-6) var(--space-12) 0;
+    display: flex; align-items: center; gap: var(--space-3);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    color: var(--text-tertiary);
+  }
+  .crumb-strip .sep { opacity: 0.4; }
+  .crumb-strip .here { color: var(--gold-700); }
+
+  .lesson-hero {
+    padding: var(--space-16) var(--space-12) var(--space-12);
+    max-width: 1100px; margin: 0 auto;
+    text-align: center; position: relative;
+  }
+  .lesson-hero::before {
+    content: ''; position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at 50% 10%, rgba(212, 175, 55, 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 30% 70%, rgba(212, 175, 55, 0.04) 0%, transparent 60%);
+    pointer-events: none; z-index: 0;
+  }
+  .lesson-hero > * { position: relative; z-index: 1; }
+  .hero-eyebrow {
+    display: inline-block; padding: 4px 14px;
+    background: rgba(212, 175, 55, 0.08);
+    border: 1px solid var(--gold-500);
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs); font-weight: 600;
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    color: var(--gold-700);
+    margin-bottom: var(--space-6);
+  }
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight: 900; line-height: 1.05;
+    letter-spacing: var(--tracking-tight);
+    margin-bottom: var(--space-5);
+  }
+  .hero-title .gold { color: var(--gold-600); font-style: italic; }
+  .hero-subtitle {
+    font-family: var(--font-display); font-style: italic;
+    font-size: clamp(1.1rem, 2vw, 1.5rem);
+    color: var(--text-secondary);
+    max-width: 680px; margin: 0 auto var(--space-8);
+    line-height: var(--leading-snug);
+  }
+  .hero-meta {
+    display: flex; justify-content: center; gap: var(--space-6); flex-wrap: wrap;
+    font-size: var(--text-sm); color: var(--text-tertiary);
+  }
+  .hero-meta span strong { color: var(--gold-700); font-weight: 600; }
+
+  /* ----- Section ----- */
+  .section {
+    max-width: 1100px;
+    margin: var(--space-20) auto;
+    padding: 0 var(--space-12);
+  }
+  .section-header { text-align: center; margin-bottom: var(--space-10); }
+  .section-header .eyebrow {
+    display: inline-block;
+    font-size: var(--text-xs); font-weight: 600;
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    color: var(--gold-700);
+    margin-bottom: var(--space-3);
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+    font-weight: 700;
+    letter-spacing: var(--tracking-tight);
+    line-height: var(--leading-tight);
+    margin-bottom: var(--space-4);
+  }
+  .section-title .gold { color: var(--gold-600); font-style: italic; }
+  .section-subtitle {
+    font-size: var(--text-lg); color: var(--text-secondary);
+    max-width: 640px; margin: 0 auto;
+    line-height: var(--leading-relaxed);
+  }
+
+  /* ----- Boardroom stage ----- */
   .boardroom {
     position: relative;
     background:
       radial-gradient(ellipse at top, rgba(212, 175, 55, 0.08) 0%, transparent 60%),
-      linear-gradient(180deg, var(--charcoal-900) 0%, var(--charcoal-950) 100%);
+      linear-gradient(180deg, var(--charcoal-900, #171717) 0%, var(--charcoal-950, #0a0a0a) 100%);
     border: 1px solid var(--gold-500);
     border-radius: var(--radius-2xl);
     overflow: hidden;
     box-shadow: var(--shadow-xl), 0 0 60px rgba(212, 175, 55, 0.1);
   }
-  /* Art-deco gilded header strip */
   .boardroom-header {
     position: relative;
-    padding: var(--space-8) var(--space-10);
+    padding: var(--space-10) var(--space-12);
     background:
       repeating-linear-gradient(
         45deg,
@@ -38,34 +138,28 @@
       ),
       linear-gradient(180deg, rgba(212, 175, 55, 0.12) 0%, transparent 100%);
     border-bottom: 1px solid var(--gold-500);
+    text-align: center;
   }
   .boardroom-header::before,
   .boardroom-header::after {
     content: ''; position: absolute;
     height: 2px;
     background: var(--gradient-gold);
-    left: var(--space-10); right: var(--space-10);
+    left: var(--space-12); right: var(--space-12);
   }
-  .boardroom-header::before { top: 8px; opacity: 0.7; }
-  .boardroom-header::after { bottom: 8px; opacity: 0.7; }
+  .boardroom-header::before { top: 10px; opacity: 0.7; }
+  .boardroom-header::after { bottom: 10px; opacity: 0.7; }
 
   .boardroom-eyebrow {
-    font-family: var(--font-body);
-    font-size: var(--text-xs);
-    font-weight: 700;
+    font-size: var(--text-xs); font-weight: 700;
     letter-spacing: var(--tracking-widest);
     text-transform: uppercase;
     color: var(--gold-600);
-    margin-bottom: var(--space-3);
-    display: flex; align-items: center; gap: var(--space-3);
-  }
-  .boardroom-eyebrow .divider {
-    flex: 1; height: 1px;
-    background: linear-gradient(90deg, var(--gold-500), transparent);
+    margin-bottom: var(--space-4);
   }
   .boardroom-title {
     font-family: var(--font-display);
-    font-size: clamp(2.25rem, 5vw, var(--text-6xl));
+    font-size: clamp(2rem, 4.5vw, 3.5rem);
     font-weight: 900;
     font-style: italic;
     letter-spacing: var(--tracking-tight);
@@ -74,32 +168,28 @@
     margin-bottom: var(--space-3);
   }
   .boardroom-title .emph {
-    background: var(--gradient-gold-shimmer);
-    background-size: 200% 100%;
-    -webkit-background-clip: text;
-            background-clip: text;
-    color: transparent;
-    animation: goldShimmer 5s linear infinite;
+    color: var(--gold-600);
     font-style: normal;
   }
   .boardroom-meta {
-    display: flex; flex-wrap: wrap; gap: var(--space-3);
+    display: flex; justify-content: center; flex-wrap: wrap; gap: var(--space-3);
     margin-top: var(--space-5);
   }
 
-  /* ====== Tutor opener ====== */
-  .boardroom-body { padding: var(--space-10); }
+  .boardroom-body { padding: var(--space-12); }
+
+  /* ----- Tutor opener (pullquote-lite) ----- */
   .boardroom-tutor {
     display: grid;
-    grid-template-columns: 96px 1fr;
-    gap: var(--space-6);
+    grid-template-columns: 104px 1fr;
+    gap: var(--space-8);
     align-items: start;
-    margin-bottom: var(--space-10);
-    padding-bottom: var(--space-8);
+    margin-bottom: var(--space-12);
+    padding-bottom: var(--space-10);
     border-bottom: 1px dashed var(--border-subtle);
   }
   .boardroom-tutor-avatar {
-    width: 96px; height: 96px;
+    width: 104px; height: 104px;
     border-radius: var(--radius-full);
     border: 3px solid var(--gold-600);
     overflow: hidden;
@@ -110,7 +200,7 @@
   .boardroom-tutor-avatar::after {
     content: ''; position: absolute; inset: -3px;
     border-radius: inherit;
-    border: 1px solid var(--gold-400);
+    border: 1px solid var(--gold-400, #e5c158);
     opacity: 0.6;
     pointer-events: none;
   }
@@ -120,10 +210,9 @@
     font-size: var(--text-xl);
     color: var(--gold-700);
     letter-spacing: var(--tracking-tight);
-    margin-bottom: var(--space-1);
+    margin-bottom: 2px;
   }
   .boardroom-tutor-role {
-    font-family: var(--font-body);
     font-size: var(--text-xs);
     text-transform: uppercase;
     letter-spacing: var(--tracking-widest);
@@ -139,69 +228,70 @@
   }
   .boardroom-setup .emph { color: var(--gold-700); font-style: normal; font-weight: 700; }
 
-  /* ====== The task ====== */
+  /* ----- Task ----- */
   .task-label {
-    font-family: var(--font-body);
-    font-size: var(--text-xs);
-    font-weight: 700;
+    font-size: var(--text-xs); font-weight: 700;
     letter-spacing: var(--tracking-widest);
     text-transform: uppercase;
     color: var(--gold-600);
     margin-bottom: var(--space-3);
+    text-align: center;
   }
   .task-statement {
     font-family: var(--font-display);
-    font-size: var(--text-3xl);
+    font-size: clamp(1.35rem, 2.5vw, 1.75rem);
     line-height: var(--leading-snug);
     font-weight: 700;
     letter-spacing: var(--tracking-tight);
     color: var(--text-primary);
     margin-bottom: var(--space-6);
-    padding: var(--space-6) var(--space-8);
+    padding: var(--space-8) var(--space-10);
     background: var(--bg-elevated);
-    border-left: 3px solid var(--gold-600);
+    border-left: 4px solid var(--gold-600);
     border-radius: var(--radius-lg);
+    text-align: left;
   }
   .task-brief {
     font-size: var(--text-base);
     color: var(--text-secondary);
     line-height: var(--leading-relaxed);
-    margin-bottom: var(--space-8);
+    margin-bottom: var(--space-10);
+    max-width: 760px;
   }
   .task-brief strong { color: var(--text-primary); }
 
-  /* ====== Rubric ====== */
+  /* ----- Rubric ----- */
   .rubric {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: var(--space-4);
-    margin-bottom: var(--space-10);
+    margin-bottom: var(--space-12);
   }
   .rubric-card {
-    padding: var(--space-5);
-    background: var(--bg-sunken);
+    padding: var(--space-6);
+    background: var(--bg-elevated);
     border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-xl);
     position: relative;
-    transition: border-color var(--motion-fast) var(--ease-out);
+    transition: border-color var(--motion-fast) var(--ease-out), transform var(--motion-fast) var(--ease-out);
   }
-  .rubric-card:hover { border-color: var(--gold-500); }
+  .rubric-card:hover { border-color: var(--gold-500); transform: translateY(-2px); }
   .rubric-card-chip {
     display: inline-block;
-    padding: 2px 8px;
+    padding: 3px 10px;
     background: rgba(212, 175, 55, 0.12);
     color: var(--gold-700);
     border: 1px solid var(--gold-500);
     border-radius: var(--radius-sm);
     font-size: 10px;
     font-weight: 700;
-    letter-spacing: var(--tracking-wider);
+    letter-spacing: var(--tracking-widest);
     text-transform: uppercase;
     margin-bottom: var(--space-3);
   }
   .rubric-card-title {
     font-family: var(--font-display);
-    font-size: var(--text-lg);
+    font-size: var(--text-xl);
     font-weight: 700;
     color: var(--text-primary);
     margin-bottom: var(--space-2);
@@ -212,22 +302,20 @@
     line-height: var(--leading-snug);
   }
   .rubric-card-points {
-    position: absolute; top: var(--space-4); right: var(--space-4);
+    position: absolute; top: var(--space-5); right: var(--space-5);
     font-family: var(--font-display);
-    font-size: var(--text-xl);
+    font-size: var(--text-2xl);
     font-weight: 700;
     color: var(--gold-600);
   }
 
-  /* ====== Prompt entry ====== */
+  /* ----- Prompt entry ----- */
   .entry-label-row {
     display: flex; justify-content: space-between; align-items: center;
     margin-bottom: var(--space-3);
   }
   .entry-label {
-    font-family: var(--font-body);
-    font-size: var(--text-xs);
-    font-weight: 700;
+    font-size: var(--text-xs); font-weight: 700;
     letter-spacing: var(--tracking-widest);
     text-transform: uppercase;
     color: var(--gold-600);
@@ -239,10 +327,10 @@
   }
   .prompt-entry {
     width: 100%;
-    min-height: 220px;
-    padding: var(--space-5);
-    background: var(--charcoal-950);
-    border: 1px solid var(--border-default);
+    min-height: 240px;
+    padding: var(--space-6);
+    background: var(--charcoal-950, #0a0a0a);
+    border: 1px solid var(--border-subtle);
     border-radius: var(--radius-lg);
     font-family: var(--font-mono);
     font-size: var(--text-sm);
@@ -258,34 +346,31 @@
   }
   .prompt-entry::placeholder { color: #6a6356; font-style: italic; }
 
-  /* ====== Scaffolding hints (pops open) ====== */
   .scaffold {
-    margin-top: var(--space-4);
-    padding: var(--space-4) var(--space-5);
+    margin-top: var(--space-5);
+    padding: var(--space-5);
     background: var(--bg-elevated);
     border: 1px dashed var(--gold-500);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     font-size: var(--text-sm);
     color: var(--text-secondary);
   }
-  .scaffold-title {
-    font-family: var(--font-body);
+  .scaffold summary {
+    cursor: pointer;
     font-weight: 600;
     color: var(--gold-700);
     font-size: var(--text-xs);
     text-transform: uppercase;
     letter-spacing: var(--tracking-wider);
-    margin-bottom: var(--space-2);
   }
   .scaffold code {
     font-family: var(--font-mono);
     color: var(--gold-700);
     background: rgba(212, 175, 55, 0.08);
-    padding: 1px 5px;
+    padding: 1px 6px;
     border-radius: var(--radius-sm);
   }
 
-  /* ====== Actions ====== */
   .actions {
     display: flex; justify-content: space-between; align-items: center;
     gap: var(--space-4); flex-wrap: wrap;
@@ -296,44 +381,27 @@
   .actions-left { display: flex; gap: var(--space-3); }
   .actions-hint { font-size: var(--text-xs); color: var(--text-tertiary); font-style: italic; }
 
-  .btn-submit {
-    position: relative;
-    padding: var(--space-4) var(--space-10);
-    font-size: var(--text-base);
-    overflow: hidden;
-  }
-  .btn-submit::after {
-    content: '';
-    position: absolute;
-    top: 0; left: -100%;
-    width: 100%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-    transition: left 600ms var(--ease-luxe);
-  }
-  .btn-submit:hover::after { left: 100%; }
-
-  /* ====== Past attempts strip ====== */
+  /* ----- Past attempts ----- */
   .attempts {
-    margin-top: var(--space-12);
-    padding: var(--space-6);
+    padding: var(--space-8);
     background: var(--bg-elevated);
     border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-2xl);
   }
   .attempts-title {
     font-family: var(--font-display);
     font-size: var(--text-xl);
     font-weight: 700;
     color: var(--text-primary);
-    margin-bottom: var(--space-4);
+    margin-bottom: var(--space-5);
   }
   .attempts-list { display: flex; flex-direction: column; gap: var(--space-3); }
   .attempt-row {
     display: flex; align-items: center; gap: var(--space-4);
-    padding: var(--space-3) var(--space-4);
-    background: var(--bg-sunken);
+    padding: var(--space-4) var(--space-5);
+    background: var(--bg-card);
     border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     font-size: var(--text-sm);
   }
   .attempt-num {
@@ -348,40 +416,109 @@
     flex: 1;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
-  .attempt-verdict.hired { color: var(--gold-700); font-weight: 700; }
-  .attempt-verdict.fired { color: var(--burgundy-400); font-weight: 700; }
+  .attempt-verdict { font-weight: 700; letter-spacing: var(--tracking-wide); font-size: 11px; }
+  .attempt-verdict.hired { color: var(--gold-700); }
+  .attempt-verdict.fired { color: #c88a8a; }
+
+  /* ----- Tags ----- */
+  .tag {
+    display: inline-block;
+    padding: 4px 12px;
+    font-size: var(--text-xs); font-weight: 600;
+    letter-spacing: var(--tracking-wide);
+    border-radius: var(--radius-full);
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+  }
+  .tag.gold { background: rgba(212, 175, 55, 0.12); border-color: var(--gold-500); color: var(--gold-700); }
+
+  /* ----- Footer ----- */
+  .page-footer {
+    max-width: 1200px; margin: 0 auto;
+    padding: var(--space-12);
+    border-top: 1px solid var(--border-subtle);
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-4);
+    font-size: var(--text-sm);
+    color: var(--text-tertiary);
+  }
+
+  @media (max-width: 700px) {
+    .landing-nav { padding: var(--space-4) var(--space-6); flex-wrap: wrap; gap: var(--space-3); }
+    .landing-nav-links { display: none; }
+    .crumb-strip, .section { padding-left: var(--space-6); padding-right: var(--space-6); }
+    .boardroom-header { padding: var(--space-8) var(--space-6); }
+    .boardroom-body { padding: var(--space-8) var(--space-6); }
+    .boardroom-tutor { grid-template-columns: 1fr; text-align: center; }
+    .boardroom-tutor-avatar { margin: 0 auto; }
+    .task-statement { padding: var(--space-6); }
+  }
 </style>
 </head>
 <body>
 
-<div class="page-wrap">
+<!-- ===== Nav ===== -->
+<nav class="landing-nav">
+  <div class="landing-nav-brand">
+    <div class="sidebar-logo-mark">P</div>
+    <div>
+      <div class="sidebar-logo-text">Prompt Professor</div>
+    </div>
+  </div>
+  <div class="landing-nav-links">
+    <a href="index.html">Gallery</a>
+    <a href="landing.html">Course</a>
+    <a href="lesson-page.html">Lesson</a>
+    <a href="quiz-feedback.html">Feedback</a>
+    <a href="library.html">Library</a>
+  </div>
+  <div class="landing-nav-meta">
+    <span class="streak">🔥 7-day streak</span>
+    <span>✦ 2,340 XP</span>
+  </div>
+</nav>
 
-  <!-- Header crumbs -->
-  <header class="page-hdr">
-    <div class="eyebrow">Design Spike · Boardroom Challenge Screen</div>
-    <h1 class="display display-2" style="margin-top: var(--space-3);">You're in the boardroom.</h1>
-    <p class="lesson-prose" style="max-width: 720px; margin-top: var(--space-3);">
-      The Module 3 signature pattern. A high-stakes, Apprentice-style challenge card where the learner writes a real prompt against a rubric, and Mr. Trump grades the result.
-    </p>
-  </header>
+<!-- ===== Crumb strip ===== -->
+<div class="crumb-strip">
+  <span>Course</span>
+  <span class="sep">›</span>
+  <span>Module 3 · Applied Practice</span>
+  <span class="sep">›</span>
+  <span class="here">Boardroom Challenge 3.2</span>
+</div>
 
-  <!-- ==================== BOARDROOM CHALLENGE ==================== -->
-  <section class="boardroom">
+<!-- ===== Hero ===== -->
+<section class="lesson-hero">
+  <span class="hero-eyebrow">✦ Apprentice-style Challenge ✦</span>
+  <h1 class="hero-title">
+    You're in the <span class="gold">boardroom.</span>
+  </h1>
+  <p class="hero-subtitle">
+    The Module 3 signature pattern. A high-stakes challenge card where you write a real prompt against a rubric — and Mr. Trump grades the result. Hired or fired. Then rebuilt.
+  </p>
+  <div class="hero-meta">
+    <span><strong>+250</strong> XP on pass</span>
+    <span>·</span>
+    <span><strong>3</strong> attempts allowed</span>
+    <span>·</span>
+    <span><strong>~10</strong> min</span>
+  </div>
+</section>
+
+<!-- ===== Boardroom stage ===== -->
+<section class="section">
+  <div class="boardroom">
 
     <!-- Gilded header strip -->
     <div class="boardroom-header">
-      <div class="boardroom-eyebrow">
-        <span>Module 3 · Lesson 3.2 · Boardroom Challenge</span>
-        <span class="divider"></span>
-        <span>#14 of the campaign</span>
-      </div>
+      <div class="boardroom-eyebrow">Module 3 · Lesson 3.2 · Challenge #14 of the campaign</div>
       <h2 class="boardroom-title">
         The Content <span class="emph">Crunch.</span>
       </h2>
       <div class="boardroom-meta">
         <span class="tag gold">+250 XP on pass</span>
         <span class="tag">Applied Practice</span>
-        <span class="tag">3 attempts allowed</span>
+        <span class="tag">3 attempts</span>
         <span class="tag">~10 min</span>
       </div>
     </div>
@@ -391,7 +528,7 @@
       <!-- Tutor opener -->
       <div class="boardroom-tutor">
         <div class="boardroom-tutor-avatar">
-          <img src="assets/trump-avatar.png" alt="Stylized caricature of Mr. Trump, the in-app tutor" style="width: 100%; height: 100%; object-fit: cover; object-position: 68% 18%;">
+          <img src="assets/trump-avatar.png" alt="Mr. Trump, your tutor" style="width: 100%; height: 100%; object-fit: cover; object-position: 68% 18%;">
         </div>
         <div>
           <div class="boardroom-tutor-name">Mr. Trump</div>
@@ -402,15 +539,13 @@
         </div>
       </div>
 
-      <!-- The task -->
+      <!-- Task -->
       <div class="task-label">The Challenge</div>
       <div class="task-statement">
         Write a single prompt that turns a product's raw feature list into <em>three</em> LinkedIn posts — each with a different angle, each under 150 words, each ending with a call to action.
       </div>
       <p class="task-brief">
-        <strong>The setup:</strong> Your client is launching an AI-powered expense tool. They gave you a bullet list of features and a brand voice doc ("confident, specific, never smarmy"). Their marketing lead wants three LinkedIn posts by EOD — one for the <strong>Finance VP</strong>, one for the <strong>startup founder</strong>, one for the <strong>skeptic</strong> — and they want to run them all through <em>one</em> prompt, not three.
-        <br><br>
-        You'll be graded against the R-G-C-F rubric. Every layer counts.
+        <strong>The setup:</strong> Your client is launching an AI-powered expense tool. They gave you a bullet list of features and a brand voice doc ("confident, specific, never smarmy"). Their marketing lead wants three LinkedIn posts by EOD — one for the <strong>Finance VP</strong>, one for the <strong>startup founder</strong>, one for the <strong>skeptic</strong> — and they want to run them all through <em>one</em> prompt, not three. You'll be graded against the R-G-C-F rubric. Every layer counts.
       </p>
 
       <!-- Rubric -->
@@ -453,18 +588,13 @@
         oninput="updateWordCount()"
       ></textarea>
 
-      <!-- Scaffolding hint (collapsible) -->
       <details class="scaffold">
-        <summary style="cursor: pointer; font-family: var(--font-body); font-weight: 600; color: var(--gold-700); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: var(--tracking-wider);">
-          Stuck? Show a structural starter (-10 XP)
-        </summary>
+        <summary>Stuck? Show a structural starter (-10 XP)</summary>
         <div style="margin-top: var(--space-3);">
-          <div class="scaffold-title">Starter skeleton</div>
-          <p>Try stacking the layers in order: <code>You are a...</code> → <code>Your task is to...</code> → <code>Constraints:</code> → <code>Format:</code>. Leave a <code>{{FEATURES}}</code> and <code>{{VOICE_DOC}}</code> slot for the variable inputs. You don't have to use this structure — but if it's your first boardroom, use the rails.</p>
+          <p>Try stacking the layers in order: <code>You are a...</code> → <code>Your task is to...</code> → <code>Constraints:</code> → <code>Format:</code>. Leave a <code>{{FEATURES}}</code> and <code>{{VOICE_DOC}}</code> slot for the variable inputs. If it's your first boardroom, use the rails.</p>
         </div>
       </details>
 
-      <!-- Actions -->
       <div class="actions">
         <div class="actions-left">
           <button class="btn btn-ghost">Save draft</button>
@@ -472,15 +602,21 @@
         </div>
         <div style="display: flex; align-items: center; gap: var(--space-4);">
           <span class="actions-hint">Mr. Trump will grade immediately.</span>
-          <button class="btn btn-primary btn-lg btn-submit">Submit for Review →</button>
+          <button class="btn btn-primary btn-lg">Submit for Review →</button>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ==================== PAST ATTEMPTS ==================== -->
-  <section class="attempts">
-    <h3 class="attempts-title">Your attempts on this challenge</h3>
+<!-- ===== Past attempts ===== -->
+<section class="section">
+  <div class="section-header">
+    <span class="eyebrow">Your history on this challenge</span>
+    <h2 class="section-title">Past <span class="gold">attempts</span></h2>
+  </div>
+  <div class="attempts">
+    <h3 class="attempts-title">The campaign so far</h3>
     <div class="attempts-list">
       <div class="attempt-row">
         <span class="attempt-num">#1</span>
@@ -491,13 +627,23 @@
       <div class="attempt-row">
         <span class="attempt-num">#2</span>
         <span class="attempt-snippet">You are a B2B marketing strategist. Your goal is to write three LinkedIn...</span>
-        <span class="attempt-verdict" style="color: var(--text-tertiary); font-weight: 600;">IN PROGRESS</span>
+        <span class="attempt-verdict" style="color: var(--text-tertiary); font-weight: 700;">IN PROGRESS</span>
         <button class="btn btn-secondary btn-sm">Resume</button>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-</div>
+<!-- ===== Footer ===== -->
+<footer class="page-footer">
+  <div>
+    <strong style="color: var(--gold-600); font-family: var(--font-display);">Prompt Professor</strong> · The best course. Believe me.
+  </div>
+  <div style="display:flex; gap: var(--space-6);">
+    <a href="index.html">Design Gallery</a>
+    <a href="landing.html">Course Home</a>
+  </div>
+</footer>
 
 <!-- Theme toggle -->
 <button class="theme-toggle" onclick="toggleTheme()">
@@ -513,9 +659,12 @@
     document.getElementById('theme-label').textContent = next === 'dark' ? '☾ Dark' : '☀ Light';
   }
   function updateWordCount() {
-    const txt = document.getElementById('prompt-entry').value;
+    const el = document.getElementById('prompt-entry');
+    const out = document.getElementById('wordcount');
+    if (!el || !out) return;
+    const txt = el.value;
     const words = txt.trim() ? txt.trim().split(/\s+/).length : 0;
-    document.getElementById('wordcount').textContent = `${words} words · ${txt.length} characters`;
+    out.textContent = words + ' words · ' + txt.length + ' characters';
   }
 </script>
 </body>

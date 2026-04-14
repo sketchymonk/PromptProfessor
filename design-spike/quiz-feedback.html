@@ -6,76 +6,254 @@
 <title>Quiz Feedback — Hired / Fired · Prompt Professor</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,900;1,500;1,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,900;1,500;1,700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles/tokens.css">
 <link rel="stylesheet" href="styles/luxe.css">
 <style>
-  .page-wrap { padding: var(--space-12) var(--space-8) var(--space-24); max-width: 1100px; margin: 0 auto; }
-  .page-hdr { margin-bottom: var(--space-12); }
-  .scenario { margin-bottom: var(--space-20); }
-  .scenario-label {
-    font-family: var(--font-body);
-    font-size: var(--text-xs); font-weight: 700;
-    letter-spacing: var(--tracking-widest); text-transform: uppercase;
-    color: var(--gold-600);
-    margin-bottom: var(--space-3);
+  body { background: var(--bg-base); }
+
+  /* ----- Shared landing-register chrome ----- */
+  .landing-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: var(--space-5) var(--space-12);
+    border-bottom: 1px solid var(--border-subtle);
+    position: sticky; top: 0; z-index: var(--z-sticky);
+    backdrop-filter: blur(12px);
+    background: color-mix(in oklab, var(--bg-base) 90%, transparent);
   }
-  .scenario-title {
-    font-family: var(--font-display);
-    font-size: var(--text-4xl);
-    letter-spacing: var(--tracking-tight);
+  .landing-nav-brand { display: flex; align-items: center; gap: var(--space-3); }
+  .landing-nav-links { display: flex; gap: var(--space-6); font-size: var(--text-sm); color: var(--text-secondary); }
+  .landing-nav-links a:hover { color: var(--gold-600); }
+  .landing-nav-meta { display: flex; align-items: center; gap: var(--space-4); font-size: var(--text-sm); color: var(--text-tertiary); }
+  .landing-nav-meta .streak { color: var(--gold-700); font-weight: 600; }
+
+  .crumb-strip {
+    max-width: 1200px; margin: 0 auto;
+    padding: var(--space-6) var(--space-12) 0;
+    display: flex; align-items: center; gap: var(--space-3);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    color: var(--text-tertiary);
+  }
+  .crumb-strip .sep { opacity: 0.4; }
+  .crumb-strip .here { color: var(--gold-700); }
+
+  .lesson-hero {
+    padding: var(--space-16) var(--space-12) var(--space-12);
+    max-width: 1100px;
+    margin: 0 auto;
+    text-align: center;
+    position: relative;
+  }
+  .lesson-hero::before {
+    content: ''; position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at 50% 10%, rgba(212, 175, 55, 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 30% 70%, rgba(212, 175, 55, 0.04) 0%, transparent 60%);
+    pointer-events: none; z-index: 0;
+  }
+  .lesson-hero > * { position: relative; z-index: 1; }
+  .hero-eyebrow {
+    display: inline-block; padding: 4px 14px;
+    background: rgba(212, 175, 55, 0.08);
+    border: 1px solid var(--gold-500);
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs); font-weight: 600;
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    color: var(--gold-700);
     margin-bottom: var(--space-6);
   }
-  .verdict-wrap {
-    display: flex; align-items: center; gap: var(--space-10);
-    padding: var(--space-10);
-    background: var(--bg-elevated);
-    border: 1px solid var(--border-subtle);
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight: 900; line-height: 1.05;
+    letter-spacing: var(--tracking-tight);
+    margin-bottom: var(--space-5);
+  }
+  .hero-title .gold { color: var(--gold-600); font-style: italic; }
+  .hero-subtitle {
+    font-family: var(--font-display); font-style: italic;
+    font-size: clamp(1.1rem, 2vw, 1.5rem);
+    color: var(--text-secondary);
+    max-width: 680px; margin: 0 auto var(--space-8);
+    line-height: var(--leading-snug);
+  }
+
+  .section {
+    max-width: 1000px; margin: var(--space-24) auto;
+    padding: 0 var(--space-12);
+  }
+  .section.wide { max-width: 1100px; }
+  .section-header { text-align: center; margin-bottom: var(--space-10); }
+  .section-header .eyebrow {
+    display: inline-block;
+    font-size: var(--text-xs); font-weight: 600;
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    color: var(--gold-700);
+    margin-bottom: var(--space-3);
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+    font-weight: 700;
+    letter-spacing: var(--tracking-tight);
+    line-height: var(--leading-tight);
+    margin-bottom: var(--space-4);
+  }
+  .section-title .gold { color: var(--gold-600); font-style: italic; }
+  .section-subtitle {
+    font-size: var(--text-lg); color: var(--text-secondary);
+    max-width: 640px; margin: 0 auto;
+    line-height: var(--leading-relaxed);
+  }
+
+  /* ----- Verdict block ----- */
+  .verdict {
+    padding: var(--space-12);
     border-radius: var(--radius-2xl);
     position: relative;
     overflow: hidden;
+    border: 1px solid var(--gold-500);
+    background: var(--bg-elevated);
   }
-  .verdict-wrap.hired {
+  .verdict::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
+    height: 4px; background: var(--gradient-gold);
+  }
+  .verdict.hired {
     background:
-      radial-gradient(circle at 20% 30%, rgba(212, 175, 55, 0.12) 0%, transparent 50%),
-      radial-gradient(circle at 80% 70%, rgba(212, 175, 55, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 20% 20%, rgba(212, 175, 55, 0.10) 0%, transparent 55%),
+      radial-gradient(circle at 85% 80%, rgba(212, 175, 55, 0.06) 0%, transparent 50%),
       var(--bg-elevated);
-    border-color: var(--gold-500);
   }
-  .verdict-wrap.fired {
+  .verdict.fired {
+    border-color: var(--burgundy-500, #7a2e2e);
     background:
-      radial-gradient(circle at 20% 30%, rgba(122, 46, 46, 0.14) 0%, transparent 50%),
-      radial-gradient(circle at 80% 70%, rgba(122, 46, 46, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 20% 20%, rgba(122, 46, 46, 0.14) 0%, transparent 55%),
+      radial-gradient(circle at 85% 80%, rgba(122, 46, 46, 0.06) 0%, transparent 50%),
       var(--bg-elevated);
-    border-color: var(--burgundy-500);
   }
-  .verdict-body { flex: 1; min-width: 0; }
+  .verdict.fired::before { background: linear-gradient(90deg, #7a2e2e, #b85757, #7a2e2e); }
+
+  .verdict-stamp {
+    display: inline-grid;
+    place-items: center;
+    width: 180px; height: 180px;
+    border-radius: var(--radius-full);
+    margin: 0 auto var(--space-8);
+    position: relative;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-style: italic;
+    letter-spacing: var(--tracking-tight);
+    transform: rotate(-6deg);
+  }
+  .verdict.hired .verdict-stamp {
+    background: var(--gradient-gold);
+    color: var(--charcoal-900);
+    box-shadow: var(--shadow-gold-glow-strong), 0 10px 30px rgba(0,0,0,0.4);
+    border: 3px double rgba(0,0,0,0.3);
+  }
+  .verdict.fired .verdict-stamp {
+    background: linear-gradient(135deg, #7a2e2e 0%, #5c1f1f 100%);
+    color: #f0d0d0;
+    box-shadow: 0 0 40px rgba(122, 46, 46, 0.5), 0 10px 30px rgba(0,0,0,0.4);
+    border: 3px double rgba(240, 208, 208, 0.3);
+  }
+  .verdict-stamp-main { font-size: 44px; line-height: 1; }
+  .verdict-stamp-sub {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    font-style: normal;
+    opacity: 0.8;
+    margin-top: 4px;
+  }
+
   .verdict-quote {
     font-family: var(--font-display);
     font-style: italic;
-    font-size: var(--text-2xl);
+    font-size: clamp(1.25rem, 2.4vw, 1.75rem);
     line-height: var(--leading-snug);
-    margin-bottom: var(--space-5);
+    text-align: center;
+    max-width: 720px; margin: 0 auto var(--space-8);
+    color: var(--text-primary);
   }
   .verdict-quote .emph { color: var(--gold-700); font-style: normal; font-weight: 700; }
-  .verdict-quote.fired-quote .emph { color: var(--burgundy-400); }
+  .verdict.fired .verdict-quote .emph { color: #e08585; }
 
-  .trump-version {
-    margin-top: var(--space-8);
-    border: 1px solid var(--gold-500);
+  .verdict-meta {
+    display: flex; justify-content: center; gap: var(--space-3); flex-wrap: wrap;
+    margin-bottom: var(--space-6);
+  }
+  .verdict-actions {
+    display: flex; justify-content: center; gap: var(--space-3); flex-wrap: wrap;
+  }
+
+  /* ----- Fired diagnostic block ----- */
+  .diagnosis {
+    max-width: 720px;
+    margin: 0 auto var(--space-8);
+    padding: var(--space-6);
+    background: rgba(122, 46, 46, 0.06);
+    border: 1px dashed #7a2e2e;
     border-radius: var(--radius-xl);
+  }
+  .diagnosis-head {
+    display: flex; flex-wrap: wrap; gap: var(--space-2);
+    justify-content: center; margin-bottom: var(--space-4);
+  }
+  .nickname {
+    font-family: var(--font-display);
+    font-size: var(--text-base);
+    font-style: italic;
+    color: #e08585;
+    background: rgba(122, 46, 46, 0.15);
+    padding: 4px 14px;
+    border-radius: var(--radius-full);
+    border: 1px dashed #b85757;
+  }
+  .learner-prompt-label {
+    font-size: var(--text-xs); font-weight: 700;
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    color: #c88a8a;
+    margin-bottom: var(--space-2);
+    text-align: center;
+  }
+  .learner-prompt {
+    padding: var(--space-5);
+    background: var(--charcoal-950, #0a0a0a);
+    border: 1px solid #7a2e2e;
+    border-radius: var(--radius-lg);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: #c9bda8;
+    line-height: var(--leading-relaxed);
+    text-align: center;
+  }
+
+  /* ----- Trump Version reveal ----- */
+  .trump-version {
+    max-width: 820px;
+    margin: var(--space-10) auto 0;
+    border: 1px solid var(--gold-500);
+    border-radius: var(--radius-2xl);
     overflow: hidden;
-    animation: revealIn var(--motion-hero-slow) var(--ease-luxe-soft) both;
+    box-shadow: var(--shadow-gold-glow);
+    animation: revealIn 600ms var(--ease-luxe, cubic-bezier(0.22, 1, 0.36, 1)) both;
   }
   @keyframes revealIn {
     0% { opacity: 0; transform: translateX(40px) scale(0.98); }
     100% { opacity: 1; transform: translateX(0) scale(1); }
   }
   .trump-version-header {
-    padding: var(--space-4) var(--space-6);
-    background: var(--gradient-gold-shimmer);
-    background-size: 200% 100%;
-    animation: goldShimmer 4s linear infinite;
+    padding: var(--space-5) var(--space-6);
+    background: var(--gradient-gold);
     color: var(--charcoal-900);
     font-family: var(--font-display);
     font-weight: 700;
@@ -83,9 +261,17 @@
     letter-spacing: var(--tracking-tight);
     display: flex; align-items: center; justify-content: space-between;
   }
+  .trump-version-header-sub {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: var(--tracking-widest);
+    opacity: 0.75;
+    text-transform: uppercase;
+  }
   .trump-version-body {
-    padding: var(--space-6);
-    background: var(--charcoal-950);
+    padding: var(--space-7);
+    background: var(--charcoal-950, #0a0a0a);
   }
   .annotated-prompt {
     font-family: var(--font-mono);
@@ -96,12 +282,12 @@
   }
   .annotation-chip {
     display: inline-block;
-    padding: 1px 8px;
+    padding: 2px 10px;
     margin-right: var(--space-2);
     font-family: var(--font-body);
     font-size: 10px;
     font-weight: 700;
-    letter-spacing: var(--tracking-wider);
+    letter-spacing: var(--tracking-widest);
     text-transform: uppercase;
     background: rgba(212, 175, 55, 0.15);
     color: var(--gold-600);
@@ -110,110 +296,207 @@
     vertical-align: middle;
   }
 
-  .learner-prompt {
-    padding: var(--space-5);
-    background: var(--charcoal-950);
-    border: 1px solid var(--burgundy-500);
-    border-radius: var(--radius-lg);
-    font-family: var(--font-mono);
-    font-size: var(--text-sm);
-    color: #c9bda8;
-    line-height: var(--leading-relaxed);
-    margin-bottom: var(--space-4);
+  /* ----- Save celebration ----- */
+  .save-demo {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-10);
+    align-items: center;
+    padding: var(--space-10);
+    background: var(--bg-elevated);
+    border: 1px solid var(--gold-500);
+    border-radius: var(--radius-2xl);
+    position: relative;
+    overflow: hidden;
   }
-  .learner-prompt-label {
-    font-family: var(--font-body);
-    font-size: var(--text-xs); font-weight: 700;
-    letter-spacing: var(--tracking-widest); text-transform: uppercase;
-    color: var(--burgundy-400);
+  .save-demo::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
+    height: 4px; background: var(--gradient-gold);
+  }
+  .save-card {
+    position: relative;
+    padding: var(--space-6) var(--space-8);
+    background: var(--charcoal-950, #0a0a0a);
+    border: 1px solid var(--gold-600);
+    border-radius: var(--radius-lg);
+    min-width: 300px;
+  }
+  .save-stamp {
+    position: absolute; top: -14px; right: -14px;
+    padding: 6px 14px;
+    background: var(--gradient-gold);
+    color: var(--charcoal-900);
+    border-radius: var(--radius-full);
+    font-family: var(--font-display);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    box-shadow: var(--shadow-gold-glow-strong);
+    animation: stampLand 500ms var(--ease-luxe, cubic-bezier(0.22, 1, 0.36, 1)) both;
+    transform: rotate(8deg);
+  }
+  @keyframes stampLand {
+    0% { opacity: 0; transform: rotate(24deg) scale(1.8); }
+    100% { opacity: 1; transform: rotate(8deg) scale(1); }
+  }
+  .save-card-label {
+    font-size: var(--text-xs); font-weight: 600;
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    color: var(--gold-700);
     margin-bottom: var(--space-2);
   }
+  .save-card-title { font-family: var(--font-display); font-size: var(--text-xl); font-weight: 700; margin-bottom: var(--space-3); }
+  .save-demo-caption { font-size: var(--text-base); color: var(--text-secondary); line-height: var(--leading-relaxed); }
+  .save-demo-caption code { color: var(--gold-700); font-family: var(--font-mono); }
 
-  .diagnosis-pills { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-5); }
-  .nickname {
-    font-family: var(--font-display);
-    font-size: var(--text-base);
-    font-style: italic;
-    color: var(--burgundy-400);
-    background: rgba(122, 46, 46, 0.1);
+  /* ----- Tags/buttons (local fallbacks in case luxe.css misses a variant) ----- */
+  .tag {
+    display: inline-block;
     padding: 4px 12px;
+    font-size: var(--text-xs); font-weight: 600;
+    letter-spacing: var(--tracking-wide);
     border-radius: var(--radius-full);
-    border: 1px dashed var(--burgundy-500);
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+  }
+  .tag.gold { background: rgba(212, 175, 55, 0.12); border-color: var(--gold-500); color: var(--gold-700); }
+  .tag.green { background: rgba(45, 90, 63, 0.15); border-color: #3d7a5a; color: #7fb894; }
+  .tag.burgundy { background: rgba(122, 46, 46, 0.12); border-color: #7a2e2e; color: #c88a8a; }
+
+  /* ----- Footer ----- */
+  .page-footer {
+    max-width: 1200px; margin: 0 auto;
+    padding: var(--space-12);
+    border-top: 1px solid var(--border-subtle);
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-4);
+    font-size: var(--text-sm);
+    color: var(--text-tertiary);
+  }
+
+  @media (max-width: 700px) {
+    .landing-nav { padding: var(--space-4) var(--space-6); flex-wrap: wrap; gap: var(--space-3); }
+    .landing-nav-links { display: none; }
+    .crumb-strip, .section { padding-left: var(--space-6); padding-right: var(--space-6); }
+    .verdict { padding: var(--space-8) var(--space-6); }
+    .save-demo { grid-template-columns: 1fr; gap: var(--space-6); padding: var(--space-6); }
+    .save-card { min-width: 0; }
   }
 </style>
 </head>
 <body>
 
-<div class="page-wrap">
+<!-- ===== Nav ===== -->
+<nav class="landing-nav">
+  <div class="landing-nav-brand">
+    <div class="sidebar-logo-mark">P</div>
+    <div>
+      <div class="sidebar-logo-text">Prompt Professor</div>
+    </div>
+  </div>
+  <div class="landing-nav-links">
+    <a href="index.html">Gallery</a>
+    <a href="landing.html">Course</a>
+    <a href="lesson-page.html">Lesson</a>
+    <a href="library.html">Library</a>
+    <a href="boardroom-challenge.html">Boardroom</a>
+  </div>
+  <div class="landing-nav-meta">
+    <span class="streak">🔥 7-day streak</span>
+    <span>✦ 2,340 XP</span>
+  </div>
+</nav>
 
-  <!-- Header -->
-  <header class="page-hdr">
-    <div class="eyebrow" style="margin-bottom: var(--space-3);">Design Spike · Quiz Feedback States</div>
-    <h1 class="display display-1">Hired &amp; Fired</h1>
-    <p class="lesson-prose" style="max-width: 720px; margin-top: var(--space-4);">
-      The signature interaction. On every quiz or exercise, Mr. Trump delivers a verdict — and if the learner missed, the <strong>Trump Version</strong> reveals the upgraded prompt immediately after. No shaming without the rescue.
-    </p>
-  </header>
+<!-- ===== Crumb strip ===== -->
+<div class="crumb-strip">
+  <span>Design Spike</span>
+  <span class="sep">›</span>
+  <span class="here">Quiz Feedback · Hired / Fired</span>
+</div>
 
-  <!-- ==================== HIRED SCENARIO ==================== -->
-  <section class="scenario">
-    <div class="scenario-label">Scenario A · Learner nails it</div>
-    <h2 class="scenario-title">You're hired!</h2>
+<!-- ===== Hero ===== -->
+<section class="lesson-hero">
+  <span class="hero-eyebrow">✦ The Signature Interaction ✦</span>
+  <h1 class="hero-title">
+    <span class="gold">Hired</span> &amp; <span class="gold">Fired</span>.
+  </h1>
+  <p class="hero-subtitle">
+    On every quiz or exercise, Mr. Trump delivers a verdict — and if the learner missed, the Trump Version reveals the upgraded prompt immediately after. No shaming without the rescue.
+  </p>
+</section>
 
-    <div class="verdict-wrap hired">
-      <div class="verdict-stamp hired animate" style="flex-shrink: 0;">
+<!-- ===== HIRED scenario ===== -->
+<section class="section">
+  <div class="section-header">
+    <span class="eyebrow">Scenario A · Learner nails it</span>
+    <h2 class="section-title">You're <span class="gold">hired!</span></h2>
+    <p class="section-subtitle">Lavish praise, XP awarded, streak rolls, and a quick next-step nudge. Celebration lasts under a second.</p>
+  </div>
+
+  <div class="verdict hired">
+    <div class="verdict-stamp">
+      <div>
         <div class="verdict-stamp-main">Hired</div>
         <div class="verdict-stamp-sub">Mr. Trump approves</div>
       </div>
-      <div class="verdict-body">
-        <p class="verdict-quote">
-          "That's a <span class="emph">tremendous</span> prompt. I've seen them all — billions, <em>billions</em> of prompts — and this one? Top tier. You named the role. You set the goal. You locked the format. Beautiful. <span class="emph">You're hired.</span> You just learned something huge. Now go use it and win bigly."
-        </p>
-        <div class="flex items-center gap-4 mt-4">
-          <span class="tag gold">+120 XP</span>
-          <span class="tag green">Lesson complete</span>
-          <span class="tag">7-day streak 🔥</span>
-        </div>
-        <div class="flex gap-3 mt-6">
-          <button class="btn btn-primary">Save to Library</button>
-          <button class="btn btn-secondary">Next Lesson →</button>
-        </div>
+    </div>
+    <div style="text-align:center;">
+      <p class="verdict-quote">
+        "That's a <span class="emph">tremendous</span> prompt. I've seen them all — billions, <em>billions</em> of prompts — and this one? Top tier. You named the role. You set the goal. You locked the format. Beautiful. <span class="emph">You're hired.</span> You just learned something huge. Now go use it and win bigly."
+      </p>
+      <div class="verdict-meta">
+        <span class="tag gold">+120 XP</span>
+        <span class="tag green">Lesson complete</span>
+        <span class="tag">7-day streak 🔥</span>
+      </div>
+      <div class="verdict-actions">
+        <button class="btn btn-primary">Save to Library</button>
+        <button class="btn btn-secondary">Next Lesson →</button>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ==================== FIRED SCENARIO ==================== -->
-  <section class="scenario">
-    <div class="scenario-label">Scenario B · Learner misses — with coaching rescue</div>
-    <h2 class="scenario-title">You're fired! (briefly)</h2>
+<!-- ===== FIRED scenario with Trump Version rescue ===== -->
+<section class="section wide">
+  <div class="section-header">
+    <span class="eyebrow">Scenario B · Learner misses · Coaching rescue</span>
+    <h2 class="section-title">You're <span class="gold">fired</span> (briefly).</h2>
+    <p class="section-subtitle">The roast lands — and immediately pivots. The Trump Version reveals the upgrade, annotated. No gap. The emotional rescue is the whole point.</p>
+  </div>
 
-    <div class="verdict-wrap fired">
-      <div class="verdict-stamp fired animate" style="flex-shrink: 0;">
+  <div class="verdict fired">
+    <div class="verdict-stamp">
+      <div>
         <div class="verdict-stamp-main">Fired</div>
         <div class="verdict-stamp-sub">…for now</div>
       </div>
-      <div class="verdict-body">
-        <div class="diagnosis-pills">
-          <span class="nickname">Sleepy Prompt</span>
-          <span class="tag burgundy">Missing Format</span>
-          <span class="tag burgundy">Missing Constraints</span>
-        </div>
+    </div>
 
-        <div class="learner-prompt-label">Your prompt</div>
-        <div class="learner-prompt">summarize this slack conversation for my boss</div>
+    <div class="diagnosis">
+      <div class="diagnosis-head">
+        <span class="nickname">Sleepy Prompt</span>
+        <span class="tag burgundy">Missing Format</span>
+        <span class="tag burgundy">Missing Constraints</span>
+      </div>
+      <div class="learner-prompt-label">Your prompt</div>
+      <div class="learner-prompt">summarize this slack conversation for my boss</div>
+    </div>
 
-        <p class="verdict-quote fired-quote">
-          "Wow. Just wow. Total disaster. <span class="emph">Sleepy Prompt.</span> No role, no constraints, no format — you asked the AI to read your mind. SAD! <span class="emph">You're fired!</span> …But don't worry, kid — I'm the greatest turnaround artist in history. Here's the Trump Version. The best."
-        </p>
+    <p class="verdict-quote">
+      "Wow. Just wow. Total disaster. <span class="emph">Sleepy Prompt.</span> No role, no constraints, no format — you asked the AI to read your mind. SAD! <span class="emph">You're fired!</span> …But don't worry, kid — I'm the greatest turnaround artist in history. Here's the Trump Version. The best."
+    </p>
 
-        <!-- Trump Version reveal -->
-        <div class="trump-version">
-          <div class="trump-version-header">
-            <span>✦ The Trump Version</span>
-            <span style="font-size: 11px; letter-spacing: var(--tracking-widest); opacity: 0.7;">ANNOTATED</span>
-          </div>
-          <div class="trump-version-body">
-            <div class="annotated-prompt"><span class="annotation-chip">Role</span>You are a senior executive chief of staff writing status updates for a CEO who reads 200 emails a day.
+    <!-- Trump Version reveal -->
+    <div class="trump-version">
+      <div class="trump-version-header">
+        <span>✦ The Trump Version</span>
+        <span class="trump-version-header-sub">Annotated</span>
+      </div>
+      <div class="trump-version-body">
+        <div class="annotated-prompt"><span class="annotation-chip">Role</span>You are a senior executive chief of staff writing status updates for a CEO who reads 200 emails a day.
 
 <span class="annotation-chip">Goal</span>Read the Slack conversation below and produce a status summary my boss can act on in under 60 seconds.
 
@@ -231,42 +514,52 @@
 
 [Slack transcript below]
 {{SLACK_TRANSCRIPT}}</div>
-          </div>
-        </div>
-
-        <div class="flex gap-3 mt-6">
-          <button class="btn btn-primary">Try Again With This Version</button>
-          <button class="btn btn-secondary">Save Trump Version to Library</button>
-          <button class="btn btn-ghost">See why each layer matters</button>
-        </div>
       </div>
     </div>
-  </section>
 
-  <!-- ==================== MICRO-STATE: Save to Library celebration ==================== -->
-  <section class="scenario">
-    <div class="scenario-label">Micro-interaction · Save-to-Library celebration</div>
-    <h2 class="scenario-title">The "deal closed" flourish</h2>
-    <div class="card" style="padding: var(--space-8); display: flex; align-items: center; gap: var(--space-8); flex-wrap: wrap;">
-      <div style="position: relative; padding: var(--space-6) var(--space-10); background: var(--bg-sunken); border: 1px solid var(--gold-600); border-radius: var(--radius-lg); min-width: 280px;">
-        <div style="position: absolute; top: -12px; right: -12px; padding: 4px 12px; background: var(--gradient-gold); color: var(--charcoal-900); border-radius: var(--radius-full); font-family: var(--font-display); font-size: var(--text-xs); font-weight: 700; letter-spacing: var(--tracking-wider); text-transform: uppercase; box-shadow: var(--shadow-gold-glow-strong); animation: stampLand 500ms var(--ease-luxe) both;">+1 Saved</div>
-        <div class="eyebrow" style="margin-bottom: var(--space-2);">Saved to Library</div>
-        <div style="font-family: var(--font-display); font-size: var(--text-xl); font-weight: 700;">R-G-C-F Slack Summary Template</div>
-        <div class="flex gap-2 mt-3">
-          <span class="tag">summarization</span>
-          <span class="tag">executive</span>
-          <span class="tag gold">template</span>
-        </div>
-      </div>
-      <div style="max-width: 400px;">
-        <p class="lesson-prose" style="font-size: var(--text-base);">
-          On save: card lifts, gold foil stamp lands in the corner, the Library counter in the sidebar ticks up <code style="color: var(--gold-700); font-family: var(--font-mono);">24 → 25</code>. Subtle. Satisfying. Addictive.
-        </p>
+    <div class="verdict-actions" style="margin-top: var(--space-8);">
+      <button class="btn btn-primary">Try Again With This Version</button>
+      <button class="btn btn-secondary">Save Trump Version to Library</button>
+      <button class="btn btn-ghost">See why each layer matters</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Save-to-Library flourish ===== -->
+<section class="section">
+  <div class="section-header">
+    <span class="eyebrow">Micro-interaction</span>
+    <h2 class="section-title">The "deal closed" <span class="gold">flourish</span></h2>
+    <p class="section-subtitle">The signature satisfying interaction of the app. Card lifts, gold foil stamp lands, Library counter ticks up.</p>
+  </div>
+
+  <div class="save-demo">
+    <div class="save-card">
+      <div class="save-stamp">+1 Saved</div>
+      <div class="save-card-label">Saved to Library</div>
+      <div class="save-card-title">R-G-C-F Slack Summary Template</div>
+      <div style="display:flex; gap: var(--space-2); flex-wrap: wrap;">
+        <span class="tag">summarization</span>
+        <span class="tag">executive</span>
+        <span class="tag gold">template</span>
       </div>
     </div>
-  </section>
+    <p class="save-demo-caption">
+      On save: card lifts, gold foil stamp lands in the corner, the Library counter ticks up <code>24 → 25</code>. Subtle. Satisfying. Addictive.
+    </p>
+  </div>
+</section>
 
-</div>
+<!-- ===== Footer ===== -->
+<footer class="page-footer">
+  <div>
+    <strong style="color: var(--gold-600); font-family: var(--font-display);">Prompt Professor</strong> · The best course. Believe me.
+  </div>
+  <div style="display:flex; gap: var(--space-6);">
+    <a href="index.html">Design Gallery</a>
+    <a href="landing.html">Course Home</a>
+  </div>
+</footer>
 
 <!-- Theme toggle -->
 <button class="theme-toggle" onclick="toggleTheme()">
