@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prompt Library · Prompt Professor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,900;1,500;1,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="styles/luxe.css">
+<style>
+  .library-header {
+    padding: var(--space-10) 0 var(--space-8);
+    border-bottom: 1px solid var(--border-subtle);
+    margin-bottom: var(--space-8);
+  }
+  .library-title-row { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: var(--space-6); margin-bottom: var(--space-6); }
+
+  .library-controls {
+    display: flex; gap: var(--space-3); align-items: center;
+    margin-bottom: var(--space-6);
+    flex-wrap: wrap;
+  }
+  .search-input {
+    flex: 1;
+    min-width: 280px;
+    padding: var(--space-3) var(--space-5);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-full);
+    color: var(--text-primary);
+    font-size: var(--text-sm);
+    font-family: var(--font-body);
+    transition: border-color var(--motion-fast) var(--ease-out);
+  }
+  .search-input::placeholder { color: var(--text-tertiary); }
+  .search-input:focus { border-color: var(--gold-500); outline: none; }
+
+  .filter-chip {
+    padding: 6px 14px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: var(--tracking-wide);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--motion-fast) var(--ease-out);
+  }
+  .filter-chip:hover, .filter-chip.active { border-color: var(--gold-500); color: var(--gold-700); background: rgba(212, 175, 55, 0.06); }
+
+  .library-stats {
+    display: flex; gap: var(--space-8);
+    padding: var(--space-5) var(--space-6);
+    background: var(--bg-elevated);
+    border: 1px solid var(--gold-500);
+    border-radius: var(--radius-xl);
+    margin-bottom: var(--space-10);
+    position: relative;
+    overflow: hidden;
+  }
+  .library-stats::before {
+    content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 4px;
+    background: var(--gradient-gold);
+  }
+  .stat-item { flex: 1; min-width: 120px; }
+  .stat-label { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: var(--tracking-widest); color: var(--text-tertiary); margin-bottom: var(--space-2); font-weight: 600; }
+  .stat-value { font-family: var(--font-display); font-size: var(--text-3xl); font-weight: 700; color: var(--gold-700); line-height: 1; }
+
+  .library-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: var(--space-5);
+  }
+
+  .prompt-card {
+    padding: var(--space-6);
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xl);
+    display: flex; flex-direction: column;
+    gap: var(--space-4);
+    transition: all var(--motion-base) var(--ease-out);
+    cursor: pointer;
+    position: relative;
+  }
+  .prompt-card:hover {
+    border-color: var(--gold-500);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
+  .prompt-card.favorite::before {
+    content: '★'; position: absolute; top: 14px; right: 18px;
+    color: var(--gold-700); font-size: 18px;
+  }
+
+  .prompt-card-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+  .prompt-card-source {
+    font-size: var(--text-xs); text-transform: uppercase; letter-spacing: var(--tracking-wide);
+    color: var(--text-tertiary); font-weight: 600;
+  }
+  .prompt-card-title {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: 700;
+    line-height: var(--leading-snug);
+    letter-spacing: var(--tracking-tight);
+    color: var(--text-primary);
+  }
+  .prompt-card-preview {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: var(--leading-relaxed);
+    color: var(--text-secondary);
+    padding: var(--space-3);
+    background: var(--charcoal-950);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-subtle);
+    max-height: 120px; overflow: hidden;
+    position: relative;
+  }
+  [data-theme='light'] .prompt-card-preview { background: var(--ivory-200); color: var(--text-primary-light); }
+  .prompt-card-preview::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 40px;
+    background: linear-gradient(180deg, transparent, var(--charcoal-950));
+  }
+  [data-theme='light'] .prompt-card-preview::after { background: linear-gradient(180deg, transparent, var(--ivory-200)); }
+
+  .prompt-card-tags { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .prompt-card-footer {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--border-subtle);
+    font-size: var(--text-xs);
+    color: var(--text-tertiary);
+  }
+  .prompt-card-actions { display: flex; gap: var(--space-2); }
+  .icon-btn {
+    width: 28px; height: 28px;
+    display: grid; place-items: center;
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--motion-fast) var(--ease-out);
+  }
+  .icon-btn:hover { background: var(--bg-card-hover); color: var(--gold-600); }
+</style>
+</head>
+<body>
+
+<svg class="svg-defs" style="position:absolute; width:0; height:0;">
+  <defs>
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c9a64c"/>
+      <stop offset="50%" stop-color="#e5c158"/>
+      <stop offset="100%" stop-color="#d4af37"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<div class="app-shell">
+  <!-- Abbreviated sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-mark">P</div>
+      <div>
+        <div class="sidebar-logo-text">Prompt Professor</div>
+        <div class="sidebar-logo-sub">The Best Course. Believe Me.</div>
+      </div>
+    </div>
+
+    <div class="tutor-chip">
+      <div class="tutor-chip-avatar">
+        <img src="assets/avatar-placeholder.svg" alt="" width="40" height="40" style="display:block;">
+      </div>
+      <div class="tutor-chip-info">
+        <div class="tutor-chip-label">Your Tutor</div>
+        <div class="tutor-chip-name">Mr. Trump</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="sidebar-nav-heading">Course</div>
+      <div class="nav-item">Module 1 — Foundation</div>
+      <div class="nav-item">Module 2 — Architecture</div>
+      <div class="nav-item">Module 3 — Applied Practice</div>
+      <div class="nav-item">Module 4 — Debugging</div>
+      <div class="nav-item">Module 5 — System Design</div>
+      <div class="nav-item">Module 6 — Library Mastery</div>
+
+      <div class="sidebar-nav-heading" style="margin-top: var(--space-6)">Tools</div>
+      <div class="nav-item active">📚 Prompt Library <span style="margin-left:auto; font-size:11px; color:var(--gold-600)">24</span></div>
+      <div class="nav-item">🏛 Failure Museum</div>
+      <div class="nav-item">⚡ Playground</div>
+      <div class="nav-item">⚙ Settings</div>
+    </nav>
+  </aside>
+
+  <div>
+    <header class="topbar">
+      <div class="breadcrumbs">
+        <span>Tools</span>
+        <span class="separator">›</span>
+        <span class="current">Prompt Library</span>
+      </div>
+      <div class="topbar-right">
+        <div class="streak-flame"><span>🔥</span><span>7</span></div>
+        <div class="xp-counter"><span>XP</span><span class="xp-value">2,340</span></div>
+        <div class="avatar-menu">JS</div>
+      </div>
+    </header>
+
+    <main class="main" style="max-width: 1200px;">
+
+      <!-- Header -->
+      <div class="library-header">
+        <div class="library-title-row">
+          <div>
+            <div class="eyebrow">Your Collection</div>
+            <h1 class="display display-1" style="margin-top: var(--space-2);">Prompt Library</h1>
+            <p class="lesson-prose" style="margin-top: var(--space-4); font-size: var(--text-lg); max-width: 640px;">
+              "Every great businessperson keeps a playbook. This? This is your playbook. The best prompts you've ever saved. Tremendous."
+            </p>
+          </div>
+          <div class="flex gap-3">
+            <button class="btn btn-ghost"><span>⇣</span> Export</button>
+            <button class="btn btn-secondary"><span>⇡</span> Import</button>
+            <button class="btn btn-primary">+ New Prompt</button>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="library-stats">
+          <div class="stat-item">
+            <div class="stat-label">Total Saved</div>
+            <div class="stat-value">24</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Favorites</div>
+            <div class="stat-value">6</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Tags</div>
+            <div class="stat-value">12</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Last Saved</div>
+            <div class="stat-value" style="font-size: var(--text-base); color: var(--text-primary); font-family: var(--font-body); font-weight: 500;">2 hrs ago</div>
+          </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="library-controls">
+          <input type="text" class="search-input" placeholder="Search your prompts — believe me, search is the best">
+          <div class="filter-chip active">All</div>
+          <div class="filter-chip">Favorites</div>
+          <div class="filter-chip">Templates</div>
+          <div class="filter-chip">By Module</div>
+          <div class="filter-chip">Recent</div>
+        </div>
+      </div>
+
+      <!-- Grid -->
+      <div class="library-grid">
+
+        <!-- Card 1 -->
+        <div class="prompt-card favorite">
+          <div class="prompt-card-head">
+            <span class="prompt-card-source">From Lesson 2.1</span>
+            <span class="tag gold">R-G-C-F</span>
+          </div>
+          <h3 class="prompt-card-title">Slack → Executive Summary Template</h3>
+          <div class="prompt-card-preview">You are a senior executive chief of staff writing status updates for a CEO who reads 200 emails a day.
+
+Read the Slack conversation below and produce a status summary my boss can act on...</div>
+          <div class="prompt-card-tags">
+            <span class="tag">summarization</span>
+            <span class="tag">executive</span>
+            <span class="tag">template</span>
+          </div>
+          <div class="prompt-card-footer">
+            <span>Saved 2 hrs ago · Used 7×</span>
+            <div class="prompt-card-actions">
+              <button class="icon-btn" title="Copy">⧉</button>
+              <button class="icon-btn" title="Edit">✎</button>
+              <button class="icon-btn" title="Playground">▶</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="prompt-card favorite">
+          <div class="prompt-card-head">
+            <span class="prompt-card-source">From Lesson 1.3</span>
+            <span class="tag gold">Clarity Drill</span>
+          </div>
+          <h3 class="prompt-card-title">Vague → Precise Rewriter</h3>
+          <div class="prompt-card-preview">You are a prompt-clarity editor. Given a vague user prompt, rewrite it to be specific, constrained, and unambiguous — while preserving the user's original intent...</div>
+          <div class="prompt-card-tags">
+            <span class="tag">rewriting</span>
+            <span class="tag">meta-prompt</span>
+            <span class="tag">utility</span>
+          </div>
+          <div class="prompt-card-footer">
+            <span>Saved 1 day ago · Used 12×</span>
+            <div class="prompt-card-actions">
+              <button class="icon-btn">⧉</button>
+              <button class="icon-btn">✎</button>
+              <button class="icon-btn">▶</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="prompt-card">
+          <div class="prompt-card-head">
+            <span class="prompt-card-source">From Playground</span>
+            <span class="tag">custom</span>
+          </div>
+          <h3 class="prompt-card-title">Code Review — Security Focus</h3>
+          <div class="prompt-card-preview">Role: You are a staff security engineer with experience in OWASP top 10 vulnerabilities.
+Goal: Review the pasted code for security flaws.
+Constraints: Flag CWE numbers. Rank by severity...</div>
+          <div class="prompt-card-tags">
+            <span class="tag">code-review</span>
+            <span class="tag">security</span>
+          </div>
+          <div class="prompt-card-footer">
+            <span>Saved 3 days ago · Used 2×</span>
+            <div class="prompt-card-actions">
+              <button class="icon-btn">⧉</button>
+              <button class="icon-btn">✎</button>
+              <button class="icon-btn">▶</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="prompt-card favorite">
+          <div class="prompt-card-head">
+            <span class="prompt-card-source">From Lesson 1.2</span>
+            <span class="tag gold">Context Stack</span>
+          </div>
+          <h3 class="prompt-card-title">Context Hierarchy Boilerplate</h3>
+          <div class="prompt-card-preview"><system>You are...</system>
+<context>
+  <user_background>...</user_background>
+  <prior_context>...</prior_context>
+</context>
+<task>...</task>
+<constraints>...</constraints>...</div>
+          <div class="prompt-card-tags">
+            <span class="tag">xml</span>
+            <span class="tag">template</span>
+            <span class="tag">claude</span>
+          </div>
+          <div class="prompt-card-footer">
+            <span>Saved 4 days ago · Used 18×</span>
+            <div class="prompt-card-actions">
+              <button class="icon-btn">⧉</button>
+              <button class="icon-btn">✎</button>
+              <button class="icon-btn">▶</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="prompt-card">
+          <div class="prompt-card-head">
+            <span class="prompt-card-source">From Lesson 1.4</span>
+            <span class="tag gold">Intent Check</span>
+          </div>
+          <h3 class="prompt-card-title">"What Am I Actually Asking?" Rewriter</h3>
+          <div class="prompt-card-preview">Before executing this task, restate what you believe I'm asking for in plain language. If anything is ambiguous, ask me one clarifying question...</div>
+          <div class="prompt-card-tags">
+            <span class="tag">intent</span>
+            <span class="tag">clarification</span>
+          </div>
+          <div class="prompt-card-footer">
+            <span>Saved 5 days ago · Used 4×</span>
+            <div class="prompt-card-actions">
+              <button class="icon-btn">⧉</button>
+              <button class="icon-btn">✎</button>
+              <button class="icon-btn">▶</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 6 -->
+        <div class="prompt-card">
+          <div class="prompt-card-head">
+            <span class="prompt-card-source">From Failure Museum</span>
+            <span class="tag burgundy">Fixed</span>
+          </div>
+          <h3 class="prompt-card-title">Retail FAQ Bot — Rebuilt</h3>
+          <div class="prompt-card-preview">/* The Loser Prompt said "answer customer questions" — Mr. Trump rebuilt it with role, constraint, and escalation path. */
+
+Role: Senior customer support lead for an online retailer...</div>
+          <div class="prompt-card-tags">
+            <span class="tag">support</span>
+            <span class="tag">rebuild</span>
+          </div>
+          <div class="prompt-card-footer">
+            <span>Saved 1 week ago · Used 3×</span>
+            <div class="prompt-card-actions">
+              <button class="icon-btn">⧉</button>
+              <button class="icon-btn">✎</button>
+              <button class="icon-btn">▶</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Empty-state example (scrollable for demo) -->
+      <section style="margin-top: var(--space-20); padding: var(--space-12); border: 1px dashed var(--border-default); border-radius: var(--radius-2xl); text-align: center; background: var(--bg-elevated);">
+        <div class="eyebrow" style="margin-bottom: var(--space-3);">Empty-state example</div>
+        <h2 class="display display-3">Library looking a little low-energy?</h2>
+        <p class="lesson-prose" style="margin: var(--space-4) auto; max-width: 520px; font-size: var(--text-base);">
+          "Your library is empty. SAD! But it won't stay that way. Go finish a lesson and save your first prompt. Today. Believe me — it's going to be tremendous."
+        </p>
+        <button class="btn btn-primary" style="margin-top: var(--space-4);">Continue Lesson 2.1 →</button>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<button class="theme-toggle" onclick="toggleTheme()"><span id="theme-label">☾ Dark</span></button>
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme') || 'dark';
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.getElementById('theme-label').textContent = next === 'dark' ? '☾ Dark' : '☀ Light';
+  }
+  document.querySelectorAll('.filter-chip').forEach(c => {
+    c.addEventListener('click', () => {
+      document.querySelectorAll('.filter-chip').forEach(x => x.classList.remove('active'));
+      c.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

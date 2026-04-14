@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Boardroom Challenge · Prompt Professor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,900;1,500;1,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="styles/luxe.css">
+<style>
+  .page-wrap { max-width: 1100px; margin: 0 auto; padding: var(--space-10) var(--space-8) var(--space-24); }
+  .page-hdr { margin-bottom: var(--space-10); }
+
+  /* ====== Boardroom stage — a "moment of weight" per luxe rules ====== */
+  .boardroom {
+    position: relative;
+    background:
+      radial-gradient(ellipse at top, rgba(212, 175, 55, 0.08) 0%, transparent 60%),
+      linear-gradient(180deg, var(--charcoal-900) 0%, var(--charcoal-950) 100%);
+    border: 1px solid var(--gold-500);
+    border-radius: var(--radius-2xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-xl), 0 0 60px rgba(212, 175, 55, 0.1);
+  }
+  /* Art-deco gilded header strip */
+  .boardroom-header {
+    position: relative;
+    padding: var(--space-8) var(--space-10);
+    background:
+      repeating-linear-gradient(
+        45deg,
+        rgba(212, 175, 55, 0.04) 0px,
+        rgba(212, 175, 55, 0.04) 8px,
+        transparent 8px,
+        transparent 16px
+      ),
+      linear-gradient(180deg, rgba(212, 175, 55, 0.12) 0%, transparent 100%);
+    border-bottom: 1px solid var(--gold-500);
+  }
+  .boardroom-header::before,
+  .boardroom-header::after {
+    content: ''; position: absolute;
+    height: 2px;
+    background: var(--gradient-gold);
+    left: var(--space-10); right: var(--space-10);
+  }
+  .boardroom-header::before { top: 8px; opacity: 0.7; }
+  .boardroom-header::after { bottom: 8px; opacity: 0.7; }
+
+  .boardroom-eyebrow {
+    font-family: var(--font-body);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    color: var(--gold-600);
+    margin-bottom: var(--space-3);
+    display: flex; align-items: center; gap: var(--space-3);
+  }
+  .boardroom-eyebrow .divider {
+    flex: 1; height: 1px;
+    background: linear-gradient(90deg, var(--gold-500), transparent);
+  }
+  .boardroom-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.25rem, 5vw, var(--text-6xl));
+    font-weight: 900;
+    font-style: italic;
+    letter-spacing: var(--tracking-tight);
+    line-height: var(--leading-tight);
+    color: var(--text-primary);
+    margin-bottom: var(--space-3);
+  }
+  .boardroom-title .emph {
+    background: var(--gradient-gold-shimmer);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+            background-clip: text;
+    color: transparent;
+    animation: goldShimmer 5s linear infinite;
+    font-style: normal;
+  }
+  .boardroom-meta {
+    display: flex; flex-wrap: wrap; gap: var(--space-3);
+    margin-top: var(--space-5);
+  }
+
+  /* ====== Tutor opener ====== */
+  .boardroom-body { padding: var(--space-10); }
+  .boardroom-tutor {
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    gap: var(--space-6);
+    align-items: start;
+    margin-bottom: var(--space-10);
+    padding-bottom: var(--space-8);
+    border-bottom: 1px dashed var(--border-subtle);
+  }
+  .boardroom-tutor-avatar {
+    width: 96px; height: 96px;
+    border-radius: var(--radius-full);
+    border: 3px solid var(--gold-600);
+    overflow: hidden;
+    background: var(--charcoal-700);
+    box-shadow: var(--shadow-gold-glow-strong);
+    position: relative;
+  }
+  .boardroom-tutor-avatar::after {
+    content: ''; position: absolute; inset: -3px;
+    border-radius: inherit;
+    border: 1px solid var(--gold-400);
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  .boardroom-tutor-name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--text-xl);
+    color: var(--gold-700);
+    letter-spacing: var(--tracking-tight);
+    margin-bottom: var(--space-1);
+  }
+  .boardroom-tutor-role {
+    font-family: var(--font-body);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    color: var(--text-tertiary);
+    margin-bottom: var(--space-4);
+  }
+  .boardroom-setup {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: var(--text-xl);
+    line-height: var(--leading-snug);
+    color: var(--text-primary);
+  }
+  .boardroom-setup .emph { color: var(--gold-700); font-style: normal; font-weight: 700; }
+
+  /* ====== The task ====== */
+  .task-label {
+    font-family: var(--font-body);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    color: var(--gold-600);
+    margin-bottom: var(--space-3);
+  }
+  .task-statement {
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    line-height: var(--leading-snug);
+    font-weight: 700;
+    letter-spacing: var(--tracking-tight);
+    color: var(--text-primary);
+    margin-bottom: var(--space-6);
+    padding: var(--space-6) var(--space-8);
+    background: var(--bg-elevated);
+    border-left: 3px solid var(--gold-600);
+    border-radius: var(--radius-lg);
+  }
+  .task-brief {
+    font-size: var(--text-base);
+    color: var(--text-secondary);
+    line-height: var(--leading-relaxed);
+    margin-bottom: var(--space-8);
+  }
+  .task-brief strong { color: var(--text-primary); }
+
+  /* ====== Rubric ====== */
+  .rubric {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-10);
+  }
+  .rubric-card {
+    padding: var(--space-5);
+    background: var(--bg-sunken);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    position: relative;
+    transition: border-color var(--motion-fast) var(--ease-out);
+  }
+  .rubric-card:hover { border-color: var(--gold-500); }
+  .rubric-card-chip {
+    display: inline-block;
+    padding: 2px 8px;
+    background: rgba(212, 175, 55, 0.12);
+    color: var(--gold-700);
+    border: 1px solid var(--gold-500);
+    border-radius: var(--radius-sm);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    margin-bottom: var(--space-3);
+  }
+  .rubric-card-title {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--space-2);
+  }
+  .rubric-card-desc {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: var(--leading-snug);
+  }
+  .rubric-card-points {
+    position: absolute; top: var(--space-4); right: var(--space-4);
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: 700;
+    color: var(--gold-600);
+  }
+
+  /* ====== Prompt entry ====== */
+  .entry-label-row {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: var(--space-3);
+  }
+  .entry-label {
+    font-family: var(--font-body);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    color: var(--gold-600);
+  }
+  .entry-wordcount {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--text-tertiary);
+  }
+  .prompt-entry {
+    width: 100%;
+    min-height: 220px;
+    padding: var(--space-5);
+    background: var(--charcoal-950);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    line-height: var(--leading-relaxed);
+    color: #e0d9c8;
+    resize: vertical;
+    transition: border-color var(--motion-fast) var(--ease-out), box-shadow var(--motion-fast) var(--ease-out);
+  }
+  .prompt-entry:focus {
+    outline: none;
+    border-color: var(--gold-600);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+  }
+  .prompt-entry::placeholder { color: #6a6356; font-style: italic; }
+
+  /* ====== Scaffolding hints (pops open) ====== */
+  .scaffold {
+    margin-top: var(--space-4);
+    padding: var(--space-4) var(--space-5);
+    background: var(--bg-elevated);
+    border: 1px dashed var(--gold-500);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+  }
+  .scaffold-title {
+    font-family: var(--font-body);
+    font-weight: 600;
+    color: var(--gold-700);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider);
+    margin-bottom: var(--space-2);
+  }
+  .scaffold code {
+    font-family: var(--font-mono);
+    color: var(--gold-700);
+    background: rgba(212, 175, 55, 0.08);
+    padding: 1px 5px;
+    border-radius: var(--radius-sm);
+  }
+
+  /* ====== Actions ====== */
+  .actions {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: var(--space-4); flex-wrap: wrap;
+    margin-top: var(--space-8);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--border-subtle);
+  }
+  .actions-left { display: flex; gap: var(--space-3); }
+  .actions-hint { font-size: var(--text-xs); color: var(--text-tertiary); font-style: italic; }
+
+  .btn-submit {
+    position: relative;
+    padding: var(--space-4) var(--space-10);
+    font-size: var(--text-base);
+    overflow: hidden;
+  }
+  .btn-submit::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 600ms var(--ease-luxe);
+  }
+  .btn-submit:hover::after { left: 100%; }
+
+  /* ====== Past attempts strip ====== */
+  .attempts {
+    margin-top: var(--space-12);
+    padding: var(--space-6);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xl);
+  }
+  .attempts-title {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--space-4);
+  }
+  .attempts-list { display: flex; flex-direction: column; gap: var(--space-3); }
+  .attempt-row {
+    display: flex; align-items: center; gap: var(--space-4);
+    padding: var(--space-3) var(--space-4);
+    background: var(--bg-sunken);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+  }
+  .attempt-num {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--gold-600);
+    min-width: 40px;
+  }
+  .attempt-snippet {
+    font-family: var(--font-mono);
+    color: var(--text-secondary);
+    flex: 1;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .attempt-verdict.hired { color: var(--gold-700); font-weight: 700; }
+  .attempt-verdict.fired { color: var(--burgundy-400); font-weight: 700; }
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <!-- Header crumbs -->
+  <header class="page-hdr">
+    <div class="eyebrow">Design Spike · Boardroom Challenge Screen</div>
+    <h1 class="display display-2" style="margin-top: var(--space-3);">You're in the boardroom.</h1>
+    <p class="lesson-prose" style="max-width: 720px; margin-top: var(--space-3);">
+      The Module 3 signature pattern. A high-stakes, Apprentice-style challenge card where the learner writes a real prompt against a rubric, and Mr. Trump grades the result.
+    </p>
+  </header>
+
+  <!-- ==================== BOARDROOM CHALLENGE ==================== -->
+  <section class="boardroom">
+
+    <!-- Gilded header strip -->
+    <div class="boardroom-header">
+      <div class="boardroom-eyebrow">
+        <span>Module 3 · Lesson 3.2 · Boardroom Challenge</span>
+        <span class="divider"></span>
+        <span>#14 of the campaign</span>
+      </div>
+      <h2 class="boardroom-title">
+        The Content <span class="emph">Crunch.</span>
+      </h2>
+      <div class="boardroom-meta">
+        <span class="tag gold">+250 XP on pass</span>
+        <span class="tag">Applied Practice</span>
+        <span class="tag">3 attempts allowed</span>
+        <span class="tag">~10 min</span>
+      </div>
+    </div>
+
+    <div class="boardroom-body">
+
+      <!-- Tutor opener -->
+      <div class="boardroom-tutor">
+        <div class="boardroom-tutor-avatar">
+          <img src="assets/avatar-placeholder.svg" alt="Stylized caricature of Mr. Trump, the in-app tutor" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <div>
+          <div class="boardroom-tutor-name">Mr. Trump</div>
+          <div class="boardroom-tutor-role">Your Tutor · World Champion of Prompt Engineering</div>
+          <p class="boardroom-setup">
+            "Folks, listen up. You're in the boardroom now. No more warm-ups. A real client — huge company, <em>huge</em> — just dropped a disaster in our laps. They need <span class="emph">content, fast, and it has to be the best.</span> Write me a prompt that gets it done. Get it right, <span class="emph">you're hired.</span> Get it wrong? You know the drill. Let's go."
+          </p>
+        </div>
+      </div>
+
+      <!-- The task -->
+      <div class="task-label">The Challenge</div>
+      <div class="task-statement">
+        Write a single prompt that turns a product's raw feature list into <em>three</em> LinkedIn posts — each with a different angle, each under 150 words, each ending with a call to action.
+      </div>
+      <p class="task-brief">
+        <strong>The setup:</strong> Your client is launching an AI-powered expense tool. They gave you a bullet list of features and a brand voice doc ("confident, specific, never smarmy"). Their marketing lead wants three LinkedIn posts by EOD — one for the <strong>Finance VP</strong>, one for the <strong>startup founder</strong>, one for the <strong>skeptic</strong> — and they want to run them all through <em>one</em> prompt, not three.
+        <br><br>
+        You'll be graded against the R-G-C-F rubric. Every layer counts.
+      </p>
+
+      <!-- Rubric -->
+      <div class="rubric">
+        <div class="rubric-card">
+          <div class="rubric-card-points">25</div>
+          <div class="rubric-card-chip">Role</div>
+          <div class="rubric-card-title">Who's writing?</div>
+          <div class="rubric-card-desc">Name a specific professional identity with relevant expertise. "Marketing expert" is weak. Go further.</div>
+        </div>
+        <div class="rubric-card">
+          <div class="rubric-card-points">25</div>
+          <div class="rubric-card-chip">Goal</div>
+          <div class="rubric-card-title">What exactly?</div>
+          <div class="rubric-card-desc">The three posts, three audiences, the brand voice, the CTA. Unambiguous, no mind-reading required.</div>
+        </div>
+        <div class="rubric-card">
+          <div class="rubric-card-points">25</div>
+          <div class="rubric-card-chip">Constraints</div>
+          <div class="rubric-card-title">What must/must not?</div>
+          <div class="rubric-card-desc">Word count, tone guardrails, anti-patterns to avoid, concrete voice rules. The fence around the output.</div>
+        </div>
+        <div class="rubric-card">
+          <div class="rubric-card-points">25</div>
+          <div class="rubric-card-chip">Format</div>
+          <div class="rubric-card-title">What shape back?</div>
+          <div class="rubric-card-desc">Delimiters, headings per post, an explicit skeleton. The AI should know exactly where to pour the output.</div>
+        </div>
+      </div>
+
+      <!-- Prompt entry -->
+      <div class="entry-label-row">
+        <span class="entry-label">Your Prompt</span>
+        <span class="entry-wordcount" id="wordcount">0 words · 0 characters</span>
+      </div>
+      <textarea
+        class="prompt-entry"
+        id="prompt-entry"
+        placeholder="You are a [role]...&#10;&#10;Your goal is to...&#10;&#10;Constraints:&#10;- ...&#10;&#10;Format:&#10;..."
+        oninput="updateWordCount()"
+      ></textarea>
+
+      <!-- Scaffolding hint (collapsible) -->
+      <details class="scaffold">
+        <summary style="cursor: pointer; font-family: var(--font-body); font-weight: 600; color: var(--gold-700); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: var(--tracking-wider);">
+          Stuck? Show a structural starter (-10 XP)
+        </summary>
+        <div style="margin-top: var(--space-3);">
+          <div class="scaffold-title">Starter skeleton</div>
+          <p>Try stacking the layers in order: <code>You are a...</code> → <code>Your task is to...</code> → <code>Constraints:</code> → <code>Format:</code>. Leave a <code>{{FEATURES}}</code> and <code>{{VOICE_DOC}}</code> slot for the variable inputs. You don't have to use this structure — but if it's your first boardroom, use the rails.</p>
+        </div>
+      </details>
+
+      <!-- Actions -->
+      <div class="actions">
+        <div class="actions-left">
+          <button class="btn btn-ghost">Save draft</button>
+          <button class="btn btn-ghost">Test in Playground ↗</button>
+        </div>
+        <div style="display: flex; align-items: center; gap: var(--space-4);">
+          <span class="actions-hint">Mr. Trump will grade immediately.</span>
+          <button class="btn btn-primary btn-lg btn-submit">Submit for Review →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== PAST ATTEMPTS ==================== -->
+  <section class="attempts">
+    <h3 class="attempts-title">Your attempts on this challenge</h3>
+    <div class="attempts-list">
+      <div class="attempt-row">
+        <span class="attempt-num">#1</span>
+        <span class="attempt-snippet">Write 3 LinkedIn posts about this expense tool for different audiences...</span>
+        <span class="attempt-verdict fired">FIRED</span>
+        <button class="btn btn-ghost btn-sm">View feedback</button>
+      </div>
+      <div class="attempt-row">
+        <span class="attempt-num">#2</span>
+        <span class="attempt-snippet">You are a B2B marketing strategist. Your goal is to write three LinkedIn...</span>
+        <span class="attempt-verdict" style="color: var(--text-tertiary); font-weight: 600;">IN PROGRESS</span>
+        <button class="btn btn-secondary btn-sm">Resume</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- Theme toggle -->
+<button class="theme-toggle" onclick="toggleTheme()">
+  <span id="theme-label">☾ Dark</span>
+</button>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme') || 'dark';
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.getElementById('theme-label').textContent = next === 'dark' ? '☾ Dark' : '☀ Light';
+  }
+  function updateWordCount() {
+    const txt = document.getElementById('prompt-entry').value;
+    const words = txt.trim() ? txt.trim().split(/\s+/).length : 0;
+    document.getElementById('wordcount').textContent = `${words} words · ${txt.length} characters`;
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 2.1 — The R-G-C-F Stack · Prompt Professor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,900;1,500;1,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="styles/luxe.css">
+<style>
+  /* Page-specific: hidden SVG defs for progress ring gradient */
+  .svg-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+</style>
+</head>
+<body>
+
+<svg class="svg-defs">
+  <defs>
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c9a64c"/>
+      <stop offset="50%" stop-color="#e5c158"/>
+      <stop offset="100%" stop-color="#d4af37"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<div class="app-shell">
+
+  <!-- =================== SIDEBAR =================== -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-mark">P</div>
+      <div>
+        <div class="sidebar-logo-text">Prompt Professor</div>
+        <div class="sidebar-logo-sub">The Best Course. Believe Me.</div>
+      </div>
+    </div>
+
+    <div class="tutor-chip">
+      <div class="tutor-chip-avatar">
+        <img src="assets/avatar-placeholder.svg" alt="" width="40" height="40" style="display:block;">
+      </div>
+      <div class="tutor-chip-info">
+        <div class="tutor-chip-label">Your Tutor</div>
+        <div class="tutor-chip-name">Mr. Trump</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="sidebar-nav-heading">Course</div>
+
+      <div class="nav-module-group">
+        <div class="nav-item nav-module completed">Module 1 — Foundation</div>
+        <div class="nav-sublessons">
+          <div class="nav-item completed">1.1 What a prompt really is</div>
+          <div class="nav-item completed">1.2 Context hierarchy</div>
+          <div class="nav-item completed">1.3 Clarity &amp; specificity</div>
+          <div class="nav-item completed">1.4 Intent alignment</div>
+        </div>
+      </div>
+
+      <div class="nav-module-group">
+        <div class="nav-item nav-module">Module 2 — Architecture</div>
+        <div class="nav-sublessons">
+          <div class="nav-item active">2.1 The R-G-C-F Stack</div>
+          <div class="nav-item">2.2 XML / JSON / Markdown</div>
+          <div class="nav-item">2.3 Cross-model tone</div>
+        </div>
+      </div>
+
+      <div class="nav-module-group">
+        <div class="nav-item nav-module">Module 3 — Applied Practice</div>
+      </div>
+      <div class="nav-module-group">
+        <div class="nav-item nav-module">Module 4 — Debugging</div>
+      </div>
+      <div class="nav-module-group">
+        <div class="nav-item nav-module">Module 5 — System Design</div>
+      </div>
+      <div class="nav-module-group">
+        <div class="nav-item nav-module">Module 6 — Library Mastery</div>
+      </div>
+
+      <div class="sidebar-nav-heading" style="margin-top: var(--space-6)">Tools</div>
+      <div class="nav-item">📚 Prompt Library <span style="margin-left:auto; font-size:11px; color:var(--gold-600)">24</span></div>
+      <div class="nav-item">🏛 Failure Museum</div>
+      <div class="nav-item">⚡ Playground</div>
+      <div class="nav-item">⚙ Settings</div>
+    </nav>
+  </aside>
+
+  <!-- =================== MAIN =================== -->
+  <div>
+    <!-- Top bar -->
+    <header class="topbar">
+      <div class="breadcrumbs">
+        <span>Course</span>
+        <span class="separator">›</span>
+        <span>Module 2</span>
+        <span class="separator">›</span>
+        <span class="current">2.1 The R-G-C-F Stack</span>
+      </div>
+      <div class="topbar-right">
+        <div class="streak-flame" title="7-day streak">
+          <span class="flame">🔥</span>
+          <span>7</span>
+        </div>
+        <div class="xp-counter">
+          <span>XP</span>
+          <span class="xp-value">2,340</span>
+        </div>
+        <div class="avatar-menu" title="Profile">JS</div>
+      </div>
+    </header>
+
+    <main class="main">
+
+      <!-- ============ Lesson header ============ -->
+      <div class="lesson-section" style="margin-top: 0;">
+        <div class="lesson-section-eyebrow">Module 2 · Lesson 2.1</div>
+        <h1 class="display display-1" style="margin-bottom: var(--space-4);">The R-G-C-F Stack</h1>
+        <p class="lesson-prose" style="font-size: var(--text-xl); max-width: 720px;">
+          Four words. Four layers. The architecture every great prompt is built on — and every loser prompt forgets.
+        </p>
+        <div class="flex items-center gap-4 mt-6" style="color: var(--text-tertiary); font-size: var(--text-sm);">
+          <span>⏱ 8 min read</span>
+          <span>·</span>
+          <span>✦ 120 XP</span>
+          <span>·</span>
+          <span>3 checkpoints</span>
+        </div>
+      </div>
+
+      <!-- ============ Tutor intro card ============ -->
+      <div class="tutor-card deco-corners" style="margin-bottom: var(--space-12);">
+        <div class="tutor-card-avatar">
+          <img src="assets/avatar-placeholder.svg" alt="Mr. Trump, your tutor" width="72" height="72" style="display:block;">
+        </div>
+        <div class="tutor-card-body">
+          <div class="flex items-center gap-3">
+            <span class="tutor-card-name">Mr. Trump</span>
+            <span class="tutor-card-role">Your Tutor · Lesson Intro</span>
+          </div>
+          <p class="tutor-card-quote">
+            "Folks, let me tell you — most people write prompts like they're ordering a sandwich with their eyes closed. SAD! But not you. Not after today. Today you learn the <em style="color: var(--gold-700);">only</em> four pieces that matter. Tremendous pieces. The best."
+          </p>
+        </div>
+      </div>
+
+      <!-- ============ Lesson Focus ============ -->
+      <section class="lesson-section">
+        <header class="lesson-section-header">
+          <div class="lesson-section-eyebrow">Lesson Focus</div>
+          <h2 class="lesson-section-title">What you'll master</h2>
+        </header>
+        <p class="lesson-prose">
+          Every high-performing prompt has four layers, stacked in a specific order: <strong>Role</strong>, <strong>Goal</strong>, <strong>Constraints</strong>, and <strong>Format</strong>. Miss any one of them and the AI guesses. And when the AI guesses, <em>you lose</em>. By the end of this lesson you'll be able to inspect any prompt and call out exactly which layer is weak — and fix it.
+        </p>
+      </section>
+
+      <!-- ============ Teach section with diff ============ -->
+      <section class="lesson-section">
+        <header class="lesson-section-header">
+          <div class="lesson-section-eyebrow">The Teach</div>
+          <h2 class="lesson-section-title">See the four layers in action</h2>
+        </header>
+        <p class="lesson-prose" style="margin-bottom: var(--space-6);">
+          Here's a real before/after. Same request, two very different outcomes. Hover the highlighted parts on the right to see <em>why</em> each addition matters.
+        </p>
+
+        <div class="diff">
+          <div class="diff-pane before">
+            <div class="diff-pane-header">✗ Loser Prompt</div>
+            <div class="diff-pane-body">write me a marketing email for our new product launch</div>
+          </div>
+          <div class="diff-pane after">
+            <div class="diff-pane-header">✓ Trump Version</div>
+            <div class="diff-pane-body"><span class="diff-highlight-add" title="ROLE — tells the AI who to be. Specialist role beats generic 'you are a helpful assistant' every time.">You are a senior B2B SaaS marketing copywriter with 10 years of experience writing for technical buyers.</span>
+
+<span class="diff-highlight-add" title="GOAL — exactly what outcome. Not just 'an email' — a specific outcome.">Write a product launch email that drives demo bookings from engineering leads at companies with 50+ engineers.</span>
+
+<span class="diff-highlight-add" title="CONSTRAINTS — guardrails that prevent generic slop. Length, tone, what to avoid.">Constraints: 120 words max. One specific customer-quantified outcome (e.g. 'saved 4 hrs/week'). No buzzwords (synergy, leverage, game-changer). Skeptical-reader tone.</span>
+
+<span class="diff-highlight-add" title="FORMAT — the skeleton the AI fills in. Removes ambiguity and makes comparison easy across runs.">Format:
+- Subject line (under 8 words)
+- Opening hook (one sentence)
+- Body (2 short paragraphs)
+- CTA (one line, no exclamation)</span></div>
+          </div>
+        </div>
+
+        <p class="lesson-prose" style="margin-top: var(--space-6);">
+          <strong>Notice:</strong> each layer lands before the next. Role first (tells the AI <em>who</em> it is). Goal second (<em>what</em> to do). Constraints third (<em>how not</em> to do it wrong). Format last (<em>what shape</em> the output takes). Reorder these and quality drops — it's worth testing this for yourself in the playground.
+        </p>
+      </section>
+
+      <!-- ============ Try it ============ -->
+      <section class="lesson-section">
+        <header class="lesson-section-header">
+          <div class="lesson-section-eyebrow">Try it · Boardroom Challenge</div>
+          <h2 class="lesson-section-title">You're in the boardroom.</h2>
+        </header>
+        <div class="card card-gold-border" style="padding: var(--space-8);">
+          <p class="quote-pullout" style="margin-bottom: var(--space-5);">
+            Write me a prompt that turns a meandering Slack conversation into a crisp executive summary. Use all four layers. Show your work.
+          </p>
+          <textarea placeholder="Role: You are..." style="width:100%; min-height:160px; padding:var(--space-4); background:var(--charcoal-950); color:var(--text-primary); border:1px solid var(--border-subtle); border-radius:var(--radius-md); font-family:var(--font-mono); font-size:var(--text-sm); line-height:var(--leading-relaxed); resize:vertical;"></textarea>
+          <div class="flex justify-between items-center mt-4">
+            <span class="text-secondary" style="font-size: var(--text-sm);">Mr. Trump will grade this. Make it tremendous.</span>
+            <button class="btn btn-primary">Submit for Review →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ Quiz ============ -->
+      <section class="lesson-section">
+        <header class="lesson-section-header">
+          <div class="lesson-section-eyebrow">Checkpoint</div>
+          <h2 class="lesson-section-title">Quick check — do you know the stack?</h2>
+        </header>
+
+        <div class="quiz-question">
+          <div class="quiz-prompt">Which layer is this line? <code style="font-family:var(--font-mono); background:var(--charcoal-950); padding:2px 6px; border-radius:4px; color:var(--gold-600);">"Respond in JSON with keys: summary, sentiment, action_items."</code></div>
+          <div class="quiz-options">
+            <button class="quiz-option">
+              <span class="quiz-option-marker">A</span>
+              <span>Role — it tells the AI who to be.</span>
+            </button>
+            <button class="quiz-option">
+              <span class="quiz-option-marker">B</span>
+              <span>Goal — it states the outcome.</span>
+            </button>
+            <button class="quiz-option">
+              <span class="quiz-option-marker">C</span>
+              <span>Constraints — it limits what's allowed.</span>
+            </button>
+            <button class="quiz-option selected correct">
+              <span class="quiz-option-marker">D</span>
+              <span>Format — it defines the output shape.</span>
+            </button>
+          </div>
+          <div class="card" style="margin-top: var(--space-4); background: rgba(45, 90, 63, 0.08); border-color: var(--forest-500);">
+            <div class="flex items-center gap-3" style="margin-bottom: var(--space-2);">
+              <span class="tag green">Correct</span>
+              <span style="color: var(--gold-700); font-family: var(--font-display); font-weight: 700;">"That's right! You're hired!"</span>
+            </div>
+            <p style="font-size: var(--text-sm); color: var(--text-secondary);">
+              JSON keys define the <em>shape</em> the AI fills in — that's Format. If the line said "only respond in JSON, never plain text," it'd be a Constraint. Subtle. Important.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ Key Takeaways ============ -->
+      <section class="lesson-section">
+        <div class="key-takeaways deco-corners">
+          <div class="key-takeaways-title">Key Takeaways</div>
+          <ul class="key-takeaways-list">
+            <li>Every strong prompt has four layers: <strong>Role, Goal, Constraints, Format</strong> — in that order.</li>
+            <li><strong>Role</strong> sets perspective. <strong>Goal</strong> sets outcome. <strong>Constraints</strong> prevent slop. <strong>Format</strong> defines output shape.</li>
+            <li>When a prompt underperforms, diagnose which layer is missing before rewriting — 80% of the time it's Constraints or Format.</li>
+            <li>Order matters: swapping the layers degrades results measurably across Claude, GPT, and Gemini.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============ Debugging Notes ============ -->
+      <section class="lesson-section">
+        <header class="lesson-section-header">
+          <div class="lesson-section-eyebrow">Debugging Notes</div>
+          <h2 class="lesson-section-title">Watch out for these</h2>
+        </header>
+        <div class="flex flex-col gap-3">
+          <div class="card">
+            <div class="flex items-center gap-3 mb-2">
+              <span class="tag burgundy">Common Mistake</span>
+              <strong style="color: var(--text-primary);">Fused Role + Goal</strong>
+            </div>
+            <p class="text-secondary" style="font-size: var(--text-sm);">"You are a marketing expert and write an email about X" — the AI treats this as one instruction, and loses the specificity that comes from separating <em>who</em> from <em>what</em>.</p>
+          </div>
+          <div class="card">
+            <div class="flex items-center gap-3 mb-2">
+              <span class="tag burgundy">Common Mistake</span>
+              <strong style="color: var(--text-primary);">Implicit Format</strong>
+            </div>
+            <p class="text-secondary" style="font-size: var(--text-sm);">Asking "summarize this" without specifying shape. The model will guess — bullets, paragraphs, numbered list — and you'll get a different shape every run. Bad for downstream parsing.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ Mastery Checklist ============ -->
+      <section class="lesson-section">
+        <header class="lesson-section-header">
+          <div class="lesson-section-eyebrow">Mastery Checklist</div>
+          <h2 class="lesson-section-title">Tick these when they're true</h2>
+        </header>
+        <div class="checklist">
+          <label class="checklist-item checked">
+            <span class="checklist-check"></span>
+            <span>I can name the four layers of R-G-C-F without looking them up.</span>
+          </label>
+          <label class="checklist-item checked">
+            <span class="checklist-check"></span>
+            <span>I can label each layer in an existing prompt.</span>
+          </label>
+          <label class="checklist-item">
+            <span class="checklist-check"></span>
+            <span>I wrote one R-G-C-F prompt in the playground and ran it successfully.</span>
+          </label>
+          <label class="checklist-item">
+            <span class="checklist-check"></span>
+            <span>I saved one strong R-G-C-F example to my Prompt Library.</span>
+          </label>
+        </div>
+      </section>
+
+      <!-- ============ Tutor outro card ============ -->
+      <div class="tutor-card" style="margin-top: var(--space-16); border-color: var(--gold-500);">
+        <div class="tutor-card-avatar">
+          <img src="assets/avatar-placeholder.svg" alt="Mr. Trump, your tutor" width="72" height="72" style="display:block;">
+        </div>
+        <div class="tutor-card-body">
+          <div class="flex items-center gap-3">
+            <span class="tutor-card-name">Mr. Trump</span>
+            <span class="tutor-card-role">Your Tutor · Lesson Outro</span>
+          </div>
+          <p class="tutor-card-quote">
+            "Beautiful. Just beautiful. You learned R-G-C-F. Four layers. The best architecture there is. Nobody does it better than people who know these four layers — believe me. You just learned something <em style="color: var(--gold-700);">huge</em>. Now go use it and win bigly."
+          </p>
+          <div class="flex gap-3 mt-4">
+            <button class="btn btn-secondary btn-sm">Save R-G-C-F template to Library</button>
+            <button class="btn btn-ghost btn-sm">Share this lesson</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ Lesson footer nav ============ -->
+      <div class="lesson-footer-nav">
+        <div class="flex items-center gap-3">
+          <button class="btn btn-ghost">← Previous</button>
+          <span style="font-size: var(--text-xs); color: var(--text-tertiary);">
+            <span class="kbd">←</span> 1.4 Intent alignment
+          </span>
+        </div>
+        <div class="flex items-center gap-3">
+          <span style="font-size: var(--text-xs); color: var(--text-tertiary);">
+            2.2 XML / JSON / Markdown <span class="kbd">→</span>
+          </span>
+          <button class="btn btn-primary">Next Lesson →</button>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- Theme toggle -->
+<button class="theme-toggle" onclick="toggleTheme()">
+  <span id="theme-label">☾ Dark</span>
+</button>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme') || 'dark';
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.getElementById('theme-label').textContent = next === 'dark' ? '☾ Dark' : '☀ Light';
+  }
+  // Draw progress rings / checklist interactions (minimal)
+  document.querySelectorAll('.checklist-item').forEach(item => {
+    item.addEventListener('click', (e) => {
+      e.preventDefault();
+      item.classList.toggle('checked');
+    });
+  });
+  document.querySelectorAll('.quiz-option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      opt.parentElement.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected'));
+      opt.classList.add('selected');
+    });
+  });
+</script>
+</body>
+</html>

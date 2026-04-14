@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design Spike Gallery · Prompt Professor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,900;1,500;1,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="styles/luxe.css">
+<style>
+  .page-wrap { max-width: 1200px; margin: 0 auto; padding: var(--space-16) var(--space-8) var(--space-24); }
+
+  .spike-hero {
+    padding: var(--space-10) var(--space-12);
+    margin-bottom: var(--space-16);
+    border-radius: var(--radius-2xl);
+    background:
+      radial-gradient(ellipse at top right, rgba(212, 175, 55, 0.12) 0%, transparent 60%),
+      linear-gradient(180deg, var(--charcoal-800) 0%, var(--charcoal-900) 100%);
+    border: 1px solid var(--gold-500);
+    position: relative;
+    overflow: hidden;
+  }
+  .spike-hero::before {
+    content: ''; position: absolute; inset: 0;
+    background:
+      repeating-linear-gradient(
+        45deg,
+        rgba(212, 175, 55, 0.025) 0px,
+        rgba(212, 175, 55, 0.025) 8px,
+        transparent 8px,
+        transparent 24px
+      );
+    pointer-events: none;
+  }
+  .spike-hero > * { position: relative; }
+  .spike-hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 6vw, var(--text-6xl));
+    font-weight: 900;
+    letter-spacing: var(--tracking-tight);
+    line-height: var(--leading-tight);
+    margin-bottom: var(--space-4);
+  }
+  .spike-hero-title .emph {
+    background: var(--gradient-gold-shimmer);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+            background-clip: text;
+    color: transparent;
+    animation: goldShimmer 5s linear infinite;
+    font-style: italic;
+  }
+  .spike-hero-sub {
+    font-size: var(--text-lg);
+    color: var(--text-secondary);
+    max-width: 760px;
+    line-height: var(--leading-relaxed);
+    margin-bottom: var(--space-6);
+  }
+  .spike-meta {
+    display: flex; flex-wrap: wrap; gap: var(--space-3);
+    padding-top: var(--space-6);
+    border-top: 1px dashed var(--border-subtle);
+  }
+
+  /* Section header */
+  .section-hdr {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin: var(--space-16) 0 var(--space-6);
+    gap: var(--space-4); flex-wrap: wrap;
+  }
+  .section-hdr-title {
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    letter-spacing: var(--tracking-tight);
+  }
+  .section-hdr-line {
+    flex: 1; height: 1px;
+    background: linear-gradient(90deg, var(--gold-600), transparent);
+    margin: 0 var(--space-4);
+    min-width: 60px;
+  }
+  .section-hdr-count {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--text-tertiary);
+  }
+
+  /* Mockup grid */
+  .mockup-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: var(--space-6);
+  }
+  .mockup-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    transition: transform var(--motion-base) var(--ease-luxe-soft), border-color var(--motion-base) var(--ease-out), box-shadow var(--motion-base) var(--ease-out);
+    display: flex; flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+  }
+  .mockup-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--gold-500);
+    box-shadow: var(--shadow-lg), var(--shadow-gold-glow);
+  }
+  .mockup-thumb {
+    height: 180px;
+    position: relative;
+    overflow: hidden;
+    background: var(--charcoal-950);
+    border-bottom: 1px solid var(--border-subtle);
+    display: grid; place-items: center;
+  }
+  .mockup-thumb-bg {
+    position: absolute; inset: 0;
+    opacity: 0.6;
+  }
+  .mockup-thumb-icon {
+    position: relative;
+    font-family: var(--font-display);
+    font-size: 72px;
+    color: var(--gold-600);
+    font-weight: 900;
+    line-height: 1;
+    text-shadow: 0 0 24px rgba(212, 175, 55, 0.4);
+  }
+  .mockup-thumb-tag {
+    position: absolute; top: var(--space-3); right: var(--space-3);
+    padding: 3px 10px;
+    background: rgba(0, 0, 0, 0.6);
+    color: var(--gold-700);
+    border: 1px solid var(--gold-500);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    backdrop-filter: blur(4px);
+  }
+
+  /* Decorative thumbnail treatments per screen */
+  .thumb-landing {
+    background:
+      radial-gradient(ellipse at 30% 40%, rgba(212, 175, 55, 0.25) 0%, transparent 50%),
+      linear-gradient(135deg, var(--charcoal-800), var(--charcoal-950));
+  }
+  .thumb-lesson {
+    background:
+      linear-gradient(180deg, rgba(212, 175, 55, 0.1) 0%, transparent 40%),
+      linear-gradient(135deg, var(--charcoal-900), var(--charcoal-950));
+  }
+  .thumb-quiz {
+    background:
+      radial-gradient(circle at 25% 50%, rgba(212, 175, 55, 0.2) 0%, transparent 40%),
+      radial-gradient(circle at 75% 50%, rgba(122, 46, 46, 0.2) 0%, transparent 40%),
+      var(--charcoal-950);
+  }
+  .thumb-library {
+    background:
+      repeating-linear-gradient(
+        45deg,
+        rgba(212, 175, 55, 0.06),
+        rgba(212, 175, 55, 0.06) 2px,
+        transparent 2px,
+        transparent 12px
+      ),
+      var(--charcoal-950);
+  }
+  .thumb-boardroom {
+    background:
+      radial-gradient(ellipse at top, rgba(212, 175, 55, 0.2) 0%, transparent 60%),
+      linear-gradient(180deg, var(--charcoal-800), var(--charcoal-950));
+  }
+
+  .mockup-body { padding: var(--space-5) var(--space-6) var(--space-6); flex: 1; display: flex; flex-direction: column; gap: var(--space-2); }
+  .mockup-eyebrow {
+    font-family: var(--font-body);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    color: var(--gold-600);
+  }
+  .mockup-title {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: var(--tracking-tight);
+    line-height: var(--leading-snug);
+  }
+  .mockup-desc {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: var(--leading-snug);
+    flex: 1;
+  }
+  .mockup-notes {
+    margin-top: var(--space-3);
+    padding-top: var(--space-3);
+    border-top: 1px dashed var(--border-subtle);
+    font-size: var(--text-xs);
+    color: var(--text-tertiary);
+    line-height: var(--leading-snug);
+  }
+  .mockup-notes strong { color: var(--gold-700); }
+  .mockup-cta {
+    display: inline-flex; align-items: center; gap: var(--space-2);
+    margin-top: var(--space-3);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--gold-600);
+    transition: gap var(--motion-fast) var(--ease-out);
+  }
+  .mockup-card:hover .mockup-cta { gap: var(--space-3); color: var(--gold-700); }
+
+  /* ====== Tokens reference ====== */
+  .tokens-panel {
+    margin-top: var(--space-12);
+    padding: var(--space-8);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xl);
+  }
+  .tokens-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: var(--space-4);
+    margin-top: var(--space-5);
+  }
+  .swatch {
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-subtle);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    display: flex; flex-direction: column; gap: 4px;
+    position: relative;
+  }
+  .swatch-chip {
+    height: 56px;
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-2);
+    border: 1px solid rgba(0, 0, 0, 0.3);
+  }
+  .swatch-name { font-weight: 600; color: var(--text-primary); }
+  .swatch-hex { color: var(--text-tertiary); }
+
+  .type-grid {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: var(--space-4) var(--space-6);
+    margin-top: var(--space-5);
+    align-items: baseline;
+  }
+  .type-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--text-tertiary);
+  }
+  .type-sample.display { font-family: var(--font-display); }
+  .type-sample.body { font-family: var(--font-body); }
+  .type-sample.mono { font-family: var(--font-mono); color: var(--gold-700); }
+
+  /* ====== Notes ====== */
+  .notes {
+    margin-top: var(--space-12);
+    padding: var(--space-8);
+    background: var(--charcoal-950);
+    border: 1px solid var(--gold-500);
+    border-radius: var(--radius-xl);
+  }
+  .notes h3 {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    color: var(--gold-700);
+    margin-bottom: var(--space-4);
+  }
+  .notes ul { list-style: none; display: flex; flex-direction: column; gap: var(--space-3); }
+  .notes ul li {
+    padding-left: var(--space-5);
+    position: relative;
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: var(--leading-relaxed);
+  }
+  .notes ul li::before {
+    content: '✦';
+    position: absolute; left: 0;
+    color: var(--gold-600);
+  }
+  .notes ul li strong { color: var(--text-primary); }
+
+  .feedback-card {
+    margin-top: var(--space-10);
+    padding: var(--space-8);
+    text-align: center;
+    background: var(--bg-elevated);
+    border: 1px dashed var(--gold-500);
+    border-radius: var(--radius-xl);
+  }
+  .feedback-card p { font-family: var(--font-display); font-style: italic; font-size: var(--text-xl); color: var(--text-primary); margin-bottom: var(--space-4); }
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <!-- ==================== HERO ==================== -->
+  <section class="spike-hero">
+    <div class="eyebrow" style="margin-bottom: var(--space-4);">Design Spike · v1 · April 2026</div>
+    <h1 class="spike-hero-title">
+      Prompt Professor — <span class="emph">Trump Tower Luxe</span>
+    </h1>
+    <p class="spike-hero-sub">
+      A standalone HTML mockup gallery validating the visual direction before the Next.js build. Charcoal + gold + ivory, serif display, gilded accents at moments of weight. The in-app tutor is <strong style="color: var(--gold-700);">Mr. Trump</strong> — Apprentice-era boardroom boss, rally-era showman, world champion of prompt engineering. Click any mockup to explore.
+    </p>
+    <div class="spike-meta">
+      <span class="tag gold">5 screens</span>
+      <span class="tag">Dark mode default</span>
+      <span class="tag">Light mode toggleable</span>
+      <span class="tag">No build step</span>
+      <span class="tag">Tokens port to Tailwind</span>
+    </div>
+  </section>
+
+  <!-- ==================== MOCKUPS ==================== -->
+  <div class="section-hdr">
+    <h2 class="section-hdr-title">The Mockups</h2>
+    <span class="section-hdr-line"></span>
+    <span class="section-hdr-count">5 screens · click to open</span>
+  </div>
+
+  <div class="mockup-grid">
+
+    <!-- Landing -->
+    <a class="mockup-card" href="landing.html">
+      <div class="mockup-thumb">
+        <div class="mockup-thumb-bg thumb-landing"></div>
+        <div class="mockup-thumb-icon">PP</div>
+        <span class="mockup-thumb-tag">Marketing</span>
+      </div>
+      <div class="mockup-body">
+        <div class="mockup-eyebrow">Screen 01</div>
+        <div class="mockup-title">Landing Page</div>
+        <div class="mockup-desc">Marketing hero, "resume where you left off" card, the three pillars (diff tool, Failure Museum, Prompt Library), 6-module map + Capstone reveal.</div>
+        <div class="mockup-notes">
+          <strong>Watch for:</strong> gold saturation on hero, serif weight on the headline, hover lift on module cards.
+        </div>
+        <span class="mockup-cta">Open landing.html →</span>
+      </div>
+    </a>
+
+    <!-- Lesson -->
+    <a class="mockup-card" href="lesson-page.html">
+      <div class="mockup-thumb">
+        <div class="mockup-thumb-bg thumb-lesson"></div>
+        <div class="mockup-thumb-icon">§</div>
+        <span class="mockup-thumb-tag">Core flow</span>
+      </div>
+      <div class="mockup-body">
+        <div class="mockup-eyebrow">Screen 02</div>
+        <div class="mockup-title">Lesson Page — R-G-C-F Stack</div>
+        <div class="mockup-desc">Full Module 2.1 flow. Tutor intro → Lesson Focus → before/after diff with hover "why" annotations → Quiz → Key Takeaways → Debug notes → Mastery Checklist → Outro.</div>
+        <div class="mockup-notes">
+          <strong>Watch for:</strong> sidebar density vs breathing room, diff hover tooltips, checklist interaction, tutor voice rhythm.
+        </div>
+        <span class="mockup-cta">Open lesson-page.html →</span>
+      </div>
+    </a>
+
+    <!-- Quiz Feedback -->
+    <a class="mockup-card" href="quiz-feedback.html">
+      <div class="mockup-thumb">
+        <div class="mockup-thumb-bg thumb-quiz"></div>
+        <div class="mockup-thumb-icon" style="font-size: 36px; display: flex; gap: 16px;"><span style="color: var(--gold-700);">HIRED</span><span style="color: var(--burgundy-400);">FIRED</span></div>
+        <span class="mockup-thumb-tag">Signature</span>
+      </div>
+      <div class="mockup-body">
+        <div class="mockup-eyebrow">Screen 03</div>
+        <div class="mockup-title">Quiz Feedback — Hired / Fired</div>
+        <div class="mockup-desc">The signature Trump interaction. Gold-foil "Hired" stamp on wins, burgundy "Fired" stamp on misses — followed immediately by the annotated <em>Trump Version</em> reveal. No shaming without rescue.</div>
+        <div class="mockup-notes">
+          <strong>Watch for:</strong> stamp weight and rotation, the Trump Version shimmer wipe, the coaching-turnaround copy rhythm.
+        </div>
+        <span class="mockup-cta">Open quiz-feedback.html →</span>
+      </div>
+    </a>
+
+    <!-- Library -->
+    <a class="mockup-card" href="library.html">
+      <div class="mockup-thumb">
+        <div class="mockup-thumb-bg thumb-library"></div>
+        <div class="mockup-thumb-icon">☰</div>
+        <span class="mockup-thumb-tag">Spine</span>
+      </div>
+      <div class="mockup-body">
+        <div class="mockup-eyebrow">Screen 04</div>
+        <div class="mockup-title">Prompt Library</div>
+        <div class="mockup-desc">The course spine. Stats bar, search + filter chips, saved-prompt cards tagged by source (lesson / playground / museum), export actions. The Capstone exports this whole library.</div>
+        <div class="mockup-notes">
+          <strong>Watch for:</strong> card density, tag hierarchy, how professional CRUD chrome coexists with the luxe accents.
+        </div>
+        <span class="mockup-cta">Open library.html →</span>
+      </div>
+    </a>
+
+    <!-- Boardroom Challenge -->
+    <a class="mockup-card" href="boardroom-challenge.html">
+      <div class="mockup-thumb">
+        <div class="mockup-thumb-bg thumb-boardroom"></div>
+        <div class="mockup-thumb-icon" style="font-size: 48px;">✦</div>
+        <span class="mockup-thumb-tag">Module 3</span>
+      </div>
+      <div class="mockup-body">
+        <div class="mockup-eyebrow">Screen 05</div>
+        <div class="mockup-title">Boardroom Challenge</div>
+        <div class="mockup-desc">Apprentice-style high-stakes prompt writing. Gilded header strip, tutor setup, 4-layer R-G-C-F rubric, prompt entry with scaffolding hint, past-attempts strip. A justified "moment of weight."</div>
+        <div class="mockup-notes">
+          <strong>Watch for:</strong> art-deco border strip density, rubric card hierarchy, whether the whole thing earns its luxe register or feels overdone.
+        </div>
+        <span class="mockup-cta">Open boardroom-challenge.html →</span>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- ==================== TOKENS REFERENCE ==================== -->
+  <div class="section-hdr">
+    <h2 class="section-hdr-title">Design Tokens</h2>
+    <span class="section-hdr-line"></span>
+    <span class="section-hdr-count">port directly to tailwind.config.ts</span>
+  </div>
+
+  <div class="tokens-panel">
+    <h3 style="font-family: var(--font-display); font-size: var(--text-xl); margin-bottom: var(--space-2);">Palette</h3>
+    <p style="font-size: var(--text-sm); color: var(--text-secondary);">Never pure black. Never pure white. Gold is signature, reserved for accents + CTAs + signature moments. Semantic colors desaturated so they don't fight the gold.</p>
+    <div class="tokens-grid">
+      <div class="swatch"><div class="swatch-chip" style="background: #0a0a0a;"></div><span class="swatch-name">charcoal-950</span><span class="swatch-hex">#0a0a0a</span></div>
+      <div class="swatch"><div class="swatch-chip" style="background: #0f0f0f;"></div><span class="swatch-name">charcoal-900</span><span class="swatch-hex">#0f0f0f</span></div>
+      <div class="swatch"><div class="swatch-chip" style="background: #171717;"></div><span class="swatch-name">charcoal-800</span><span class="swatch-hex">#171717</span></div>
+      <div class="swatch"><div class="swatch-chip" style="background: #c9a64c;"></div><span class="swatch-name">gold-500</span><span class="swatch-hex">#c9a64c (base)</span></div>
+      <div class="swatch"><div class="swatch-chip" style="background: #d4af37;"></div><span class="swatch-name">gold-600</span><span class="swatch-hex">#d4af37 (brand)</span></div>
+      <div class="swatch"><div class="swatch-chip" style="background: #e5c158;"></div><span class="swatch-name">gold-700</span><span class="swatch-hex">#e5c158 (hi)</span></div>
+      <div class="swatch"><div class="swatch-chip" style="background: #faf7f0;"></div><span class="swatch-name">ivory-50</span><span class="swatch-hex">#faf7f0</span></div>
+      <div class="swatch"><div class="swatch-chip" style="background: #2d5a3f;"></div><span class="swatch-name">forest-500</span><span class="swatch-hex">#2d5a3f (correct)</span></div>
+      <div class="swatch"><div class="swatch-chip" style="background: #7a2e2e;"></div><span class="swatch-name">burgundy-500</span><span class="swatch-hex">#7a2e2e (fired)</span></div>
+    </div>
+
+    <h3 style="font-family: var(--font-display); font-size: var(--text-xl); margin: var(--space-10) 0 var(--space-2);">Typography</h3>
+    <p style="font-size: var(--text-sm); color: var(--text-secondary);">Serif display at moments of weight (headlines, verdicts, intros). Sans for UI chrome. Mono for prompts.</p>
+    <div class="type-grid">
+      <div class="type-label">display / Playfair</div>
+      <div class="type-sample display" style="font-size: var(--text-4xl); font-weight: 900;">You're hired!</div>
+      <div class="type-label">display / italic</div>
+      <div class="type-sample display" style="font-size: var(--text-2xl); font-style: italic;">"A tremendous prompt, folks."</div>
+      <div class="type-label">body / Inter</div>
+      <div class="type-sample body" style="font-size: var(--text-base);">This is the UI chrome — nav, buttons, form labels. Clean, functional, professional.</div>
+      <div class="type-label">mono / JetBrains</div>
+      <div class="type-sample mono" style="font-size: var(--text-sm);">You are a senior editor. Constraints: 100 words max. Format: bullet list.</div>
+    </div>
+  </div>
+
+  <!-- ==================== NOTES ==================== -->
+  <div class="notes">
+    <h3>Design rationale · what to evaluate</h3>
+    <ul>
+      <li><strong>Luxe restraint.</strong> Marble/gilded/serif-display appear only at <em>moments of weight</em> (verdict stamps, boardroom headers, capstone reveal). Everyday chrome (nav, forms, lists) stays clean and professional. Overuse collapses the aesthetic into pastiche — flag anywhere this feels crossed.</li>
+      <li><strong>Persona separation.</strong> Trump's voice saturates <em>copy</em> (empty states, errors, verdicts). The <em>UI chrome</em> around that copy is neutral so the platform reads as a real learning tool, not a rally. If we ever swap persona, only copy files change.</li>
+      <li><strong>Color-as-meaning.</strong> Gold = brand/celebration. Forest-green = correct. Burgundy = incorrect/fired. Never bright red — it'd fight Trump's tie and collapse the luxe register. Also: color never carries information alone (all diffs have icons + labels).</li>
+      <li><strong>Motion registers.</strong> Utility motion 150–250ms (hovers, state). Hero motion 400–700ms with overshoot (stamp land, Trump Version reveal, save-to-library). Weight conveys luxury. All disabled under <code style="color: var(--gold-700); font-family: var(--font-mono); font-size: var(--text-xs);">prefers-reduced-motion</code>.</li>
+      <li><strong>Avatar = caricature.</strong> The placeholder SVG is deliberately abstract — a right-of-publicity hedge. Final art is a commissioned <em>stylized cartoon caricature</em>, not photo-real, not AI-generated from reference photos.</li>
+      <li><strong>Port path.</strong> Every CSS custom property in <code style="color: var(--gold-700); font-family: var(--font-mono); font-size: var(--text-xs);">tokens.css</code> maps 1:1 to a future <code style="color: var(--gold-700); font-family: var(--font-mono); font-size: var(--text-xs);">tailwind.config.ts</code> entry. This spike doesn't throw away work — it locks the tokens.</li>
+    </ul>
+  </div>
+
+  <!-- ==================== FEEDBACK PROMPT ==================== -->
+  <div class="feedback-card">
+    <p>"Click through. Tell me what feels tremendous. Tell me what's <em>sleepy</em>. Then I'll fix it."</p>
+    <div style="font-size: var(--text-xs); color: var(--text-tertiary); letter-spacing: var(--tracking-wide); text-transform: uppercase; margin-top: var(--space-3);">
+      Review checklist: gold saturation · serif choice · stamp weight · copy rhythm · sidebar density
+    </div>
+  </div>
+
+</div>
+
+<!-- Theme toggle -->
+<button class="theme-toggle" onclick="toggleTheme()">
+  <span id="theme-label">☾ Dark</span>
+</button>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme') || 'dark';
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.getElementById('theme-label').textContent = next === 'dark' ? '☾ Dark' : '☀ Light';
+  }
+</script>
+</body>
+</html>
