@@ -6,178 +6,560 @@
 <title>Lesson 2.1 — The R-G-C-F Stack · Prompt Professor</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,900;1,500;1,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,900;1,500;1,700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles/tokens.css">
 <link rel="stylesheet" href="styles/luxe.css">
 <style>
-  /* Page-specific: hidden SVG defs for progress ring gradient */
-  .svg-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+  body { background: var(--bg-base); }
+
+  /* ----- Top nav (ported from landing) ----- */
+  .landing-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: var(--space-5) var(--space-12);
+    border-bottom: 1px solid var(--border-subtle);
+    position: sticky; top: 0; z-index: var(--z-sticky);
+    backdrop-filter: blur(12px);
+    background: color-mix(in oklab, var(--bg-base) 90%, transparent);
+  }
+  .landing-nav-brand { display: flex; align-items: center; gap: var(--space-3); }
+  .landing-nav-links { display: flex; gap: var(--space-6); font-size: var(--text-sm); color: var(--text-secondary); }
+  .landing-nav-links a:hover { color: var(--gold-600); }
+  .landing-nav-meta { display: flex; align-items: center; gap: var(--space-4); font-size: var(--text-sm); color: var(--text-tertiary); }
+  .landing-nav-meta .streak { color: var(--gold-700); font-weight: 600; }
+
+  /* ----- Breadcrumb strip under nav ----- */
+  .crumb-strip {
+    max-width: 1200px; margin: 0 auto;
+    padding: var(--space-6) var(--space-12) 0;
+    display: flex; align-items: center; gap: var(--space-3);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    color: var(--text-tertiary);
+  }
+  .crumb-strip .sep { opacity: 0.4; }
+  .crumb-strip .here { color: var(--gold-700); }
+
+  /* ----- Hero (ported from landing, tightened for lesson context) ----- */
+  .lesson-hero {
+    padding: var(--space-16) var(--space-12) var(--space-12);
+    max-width: 1100px;
+    margin: 0 auto;
+    text-align: center;
+    position: relative;
+  }
+  .lesson-hero::before {
+    content: ''; position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at 50% 10%, rgba(212, 175, 55, 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 30% 70%, rgba(212, 175, 55, 0.04) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .lesson-hero > * { position: relative; z-index: 1; }
+
+  .hero-eyebrow {
+    display: inline-block;
+    padding: 4px 14px;
+    background: rgba(212, 175, 55, 0.08);
+    border: 1px solid var(--gold-500);
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    color: var(--gold-700);
+    margin-bottom: var(--space-6);
+  }
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: var(--tracking-tight);
+    margin-bottom: var(--space-5);
+  }
+  .hero-title .gold { color: var(--gold-600); font-style: italic; }
+  .hero-subtitle {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(1.1rem, 2vw, 1.5rem);
+    color: var(--text-secondary);
+    max-width: 680px;
+    margin: 0 auto var(--space-8);
+    line-height: var(--leading-snug);
+  }
+  .hero-meta {
+    display: flex; justify-content: center; gap: var(--space-6); flex-wrap: wrap;
+    font-size: var(--text-sm); color: var(--text-tertiary);
+  }
+  .hero-meta span strong { color: var(--gold-700); font-weight: 600; }
+
+  /* ----- Pullquote (ported verbatim from landing) ----- */
+  .trump-pullquote {
+    max-width: 880px;
+    margin: var(--space-16) auto;
+    padding: var(--space-12) var(--space-16);
+    background: var(--bg-elevated);
+    border: 1px solid var(--gold-500);
+    border-radius: var(--radius-2xl);
+    position: relative;
+    text-align: center;
+  }
+  .trump-pullquote::before, .trump-pullquote::after {
+    content: '"';
+    font-family: var(--font-display);
+    font-size: 140px;
+    line-height: 1;
+    color: var(--gold-600);
+    opacity: 0.25;
+    position: absolute;
+  }
+  .trump-pullquote::before { top: 0; left: 24px; }
+  .trump-pullquote::after { bottom: -50px; right: 24px; }
+  .pullquote-body {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+    line-height: var(--leading-snug);
+    color: var(--text-primary);
+    margin-bottom: var(--space-6);
+    position: relative; z-index: 1;
+  }
+  .pullquote-attr { display: flex; align-items: center; justify-content: center; gap: var(--space-3); }
+  .pullquote-avatar {
+    width: 48px; height: 48px; border-radius: var(--radius-full);
+    border: 2px solid var(--gold-600);
+    overflow: hidden;
+    background: var(--charcoal-700);
+  }
+  .pullquote-name { font-family: var(--font-display); font-weight: 700; font-size: var(--text-lg); color: var(--gold-700); }
+  .pullquote-role { font-size: var(--text-xs); color: var(--text-tertiary); text-transform: uppercase; letter-spacing: var(--tracking-widest); }
+
+  /* ----- Sections ----- */
+  .section {
+    max-width: 900px;
+    margin: var(--space-24) auto;
+    padding: 0 var(--space-12);
+  }
+  .section.wide { max-width: 1100px; }
+  .section-header { text-align: center; margin-bottom: var(--space-10); }
+  .section-header .eyebrow {
+    display: inline-block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    color: var(--gold-700);
+    margin-bottom: var(--space-3);
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+    font-weight: 700;
+    letter-spacing: var(--tracking-tight);
+    line-height: var(--leading-tight);
+    margin-bottom: var(--space-4);
+  }
+  .section-title .gold { color: var(--gold-600); font-style: italic; }
+  .section-subtitle {
+    font-size: var(--text-lg);
+    color: var(--text-secondary);
+    max-width: 640px;
+    margin: 0 auto;
+    line-height: var(--leading-relaxed);
+  }
+
+  .lesson-prose {
+    font-size: var(--text-lg);
+    line-height: var(--leading-relaxed);
+    color: var(--text-primary);
+  }
+  .lesson-prose + .lesson-prose { margin-top: var(--space-5); }
+
+  /* ----- Before/After diff (redesigned with gold-accent borders) ----- */
+  .diff {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-5);
+    margin-top: var(--space-8);
+  }
+  .diff-pane {
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    display: flex; flex-direction: column;
+  }
+  .diff-pane.after { border-color: var(--gold-500); box-shadow: var(--shadow-gold-glow); }
+  .diff-pane-header {
+    padding: var(--space-4) var(--space-5);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--text-sm);
+    letter-spacing: var(--tracking-wide);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .diff-pane.before .diff-pane-header { color: var(--burgundy-500, #b05555); }
+  .diff-pane.after .diff-pane-header {
+    color: var(--charcoal-900);
+    background: var(--gradient-gold);
+    border-bottom-color: var(--gold-600);
+  }
+  .diff-pane-body {
+    padding: var(--space-5);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    line-height: var(--leading-relaxed);
+    color: var(--text-primary);
+    white-space: pre-wrap;
+    flex: 1;
+  }
+  .diff-highlight-add {
+    background: rgba(212, 175, 55, 0.12);
+    border-bottom: 1px dashed var(--gold-600);
+    padding: 1px 3px;
+    border-radius: 3px;
+    cursor: help;
+    transition: background var(--motion-fast) var(--ease-out);
+  }
+  .diff-highlight-add:hover { background: rgba(212, 175, 55, 0.22); }
+  @media (max-width: 900px) { .diff { grid-template-columns: 1fr; } }
+
+  /* ----- Challenge card (for Try It) ----- */
+  .challenge-card {
+    padding: var(--space-10);
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.06) 0%, var(--bg-elevated) 50%);
+    border: 1px solid var(--gold-500);
+    border-radius: var(--radius-2xl);
+    position: relative;
+    overflow: hidden;
+  }
+  .challenge-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
+    height: 4px; background: var(--gradient-gold);
+  }
+  .challenge-quote {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: var(--text-xl);
+    color: var(--text-primary);
+    line-height: var(--leading-snug);
+    margin-bottom: var(--space-6);
+    padding-left: var(--space-5);
+    border-left: 3px solid var(--gold-600);
+  }
+  .challenge-textarea {
+    width: 100%; min-height: 180px;
+    padding: var(--space-4);
+    background: var(--charcoal-950, #0a0a0a);
+    color: var(--text-primary);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    line-height: var(--leading-relaxed);
+    resize: vertical;
+  }
+  .challenge-textarea:focus {
+    outline: none;
+    border-color: var(--gold-500);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+  }
+  .challenge-footer { display: flex; justify-content: space-between; align-items: center; margin-top: var(--space-5); flex-wrap: wrap; gap: var(--space-4); }
+
+  /* ----- Quiz ----- */
+  .quiz-card {
+    padding: var(--space-8);
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xl);
+  }
+  .quiz-prompt {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    line-height: var(--leading-snug);
+    margin-bottom: var(--space-6);
+  }
+  .quiz-prompt code {
+    font-family: var(--font-mono);
+    background: var(--charcoal-950, #0a0a0a);
+    padding: 4px 10px;
+    border-radius: 6px;
+    color: var(--gold-600);
+    font-size: 0.85em;
+    font-style: normal;
+  }
+  .quiz-options { display: flex; flex-direction: column; gap: var(--space-3); }
+  .quiz-option {
+    display: flex; align-items: center; gap: var(--space-4);
+    padding: var(--space-4) var(--space-5);
+    background: transparent;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    color: var(--text-primary);
+    font-size: var(--text-base);
+    text-align: left;
+    cursor: pointer;
+    transition: all var(--motion-fast) var(--ease-out);
+  }
+  .quiz-option:hover { border-color: var(--gold-600); background: rgba(212, 175, 55, 0.04); }
+  .quiz-option.selected { border-color: var(--gold-500); background: rgba(212, 175, 55, 0.08); }
+  .quiz-option.correct { border-color: var(--gold-500); background: rgba(212, 175, 55, 0.12); box-shadow: var(--shadow-gold-glow); }
+  .quiz-option-marker {
+    width: 32px; height: 32px;
+    display: grid; place-items: center;
+    border: 1px solid var(--gold-600);
+    border-radius: var(--radius-full);
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--gold-700);
+    font-size: var(--text-sm);
+    flex-shrink: 0;
+  }
+  .quiz-option.correct .quiz-option-marker { background: var(--gradient-gold); color: var(--charcoal-900); border-color: var(--gold-600); }
+  .quiz-feedback {
+    margin-top: var(--space-5);
+    padding: var(--space-5) var(--space-6);
+    background: rgba(212, 175, 55, 0.06);
+    border: 1px solid var(--gold-500);
+    border-radius: var(--radius-lg);
+    border-left-width: 4px;
+  }
+  .quiz-verdict {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--gold-700);
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-2);
+  }
+
+  /* ----- Takeaways / debug / checklist cards ----- */
+  .bullet-card {
+    padding: var(--space-8) var(--space-10);
+    background: var(--bg-elevated);
+    border: 1px solid var(--gold-500);
+    border-radius: var(--radius-2xl);
+    position: relative;
+  }
+  .bullet-card .card-title {
+    font-family: var(--font-display);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    color: var(--gold-700);
+    margin-bottom: var(--space-5);
+  }
+  .bullet-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-4); }
+  .bullet-list li {
+    position: relative;
+    padding-left: var(--space-8);
+    font-size: var(--text-lg);
+    line-height: var(--leading-relaxed);
+    color: var(--text-primary);
+  }
+  .bullet-list li::before {
+    content: '✦';
+    position: absolute; left: 0; top: 2px;
+    color: var(--gold-600);
+    font-size: var(--text-lg);
+  }
+
+  .debug-grid { display: grid; gap: var(--space-4); }
+  .debug-item {
+    padding: var(--space-5) var(--space-6);
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-left: 3px solid var(--burgundy-500, #7a2e2e);
+    border-radius: var(--radius-lg);
+  }
+  .debug-tag {
+    display: inline-block;
+    padding: 2px 10px;
+    background: rgba(122, 46, 46, 0.15);
+    color: #c88a8a;
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    margin-bottom: var(--space-2);
+  }
+  .debug-title { font-family: var(--font-display); font-weight: 700; font-size: var(--text-lg); margin-bottom: var(--space-2); }
+  .debug-body { font-size: var(--text-base); color: var(--text-secondary); line-height: var(--leading-relaxed); }
+
+  .checklist { display: flex; flex-direction: column; gap: var(--space-3); }
+  .check-row {
+    display: flex; align-items: flex-start; gap: var(--space-4);
+    padding: var(--space-4) var(--space-5);
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all var(--motion-fast) var(--ease-out);
+  }
+  .check-row:hover { border-color: var(--gold-600); }
+  .check-row.checked { border-color: var(--gold-500); background: rgba(212, 175, 55, 0.05); }
+  .check-box {
+    width: 24px; height: 24px;
+    border: 1.5px solid var(--gold-600);
+    border-radius: 6px;
+    display: grid; place-items: center;
+    flex-shrink: 0;
+    color: var(--charcoal-900);
+    font-size: 16px;
+    font-weight: 700;
+    margin-top: 2px;
+  }
+  .check-row.checked .check-box { background: var(--gradient-gold); border-color: var(--gold-600); }
+  .check-row.checked .check-box::before { content: '✓'; }
+  .check-label { font-size: var(--text-base); line-height: var(--leading-relaxed); color: var(--text-primary); }
+
+  /* ----- Lesson footer nav ----- */
+  .lesson-end-nav {
+    max-width: 1100px;
+    margin: var(--space-20) auto var(--space-16);
+    padding: var(--space-10) var(--space-12) 0;
+    border-top: 1px solid var(--border-subtle);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-8);
+  }
+  .lesson-end-nav a {
+    display: flex; flex-direction: column; gap: var(--space-2);
+    padding: var(--space-6);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xl);
+    color: var(--text-primary);
+    transition: all var(--motion-base) var(--ease-out);
+  }
+  .lesson-end-nav a:hover {
+    border-color: var(--gold-500);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg), var(--shadow-gold-glow);
+  }
+  .lesson-end-nav a.next { text-align: right; }
+  .lesson-end-label { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: var(--tracking-widest); color: var(--gold-700); font-weight: 600; }
+  .lesson-end-title { font-family: var(--font-display); font-size: var(--text-xl); font-weight: 700; }
+
+  /* ----- Footer ----- */
+  .page-footer {
+    max-width: 1200px; margin: 0 auto;
+    padding: var(--space-12);
+    border-top: 1px solid var(--border-subtle);
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-4);
+    font-size: var(--text-sm);
+    color: var(--text-tertiary);
+  }
+
+  @media (max-width: 700px) {
+    .lesson-end-nav { grid-template-columns: 1fr; }
+    .landing-nav { padding: var(--space-4) var(--space-6); flex-wrap: wrap; gap: var(--space-3); }
+    .landing-nav-links { display: none; }
+    .crumb-strip, .section { padding-left: var(--space-6); padding-right: var(--space-6); }
+    .trump-pullquote { padding: var(--space-8) var(--space-6); margin-left: var(--space-6); margin-right: var(--space-6); }
+  }
 </style>
 </head>
 <body>
 
-<svg class="svg-defs">
-  <defs>
-    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#c9a64c"/>
-      <stop offset="50%" stop-color="#e5c158"/>
-      <stop offset="100%" stop-color="#d4af37"/>
-    </linearGradient>
-  </defs>
-</svg>
+<!-- ===== Nav ===== -->
+<nav class="landing-nav">
+  <div class="landing-nav-brand">
+    <div class="sidebar-logo-mark">P</div>
+    <div>
+      <div class="sidebar-logo-text">Prompt Professor</div>
+    </div>
+  </div>
+  <div class="landing-nav-links">
+    <a href="index.html">Gallery</a>
+    <a href="landing.html">Course</a>
+    <a href="library.html">Library</a>
+    <a href="boardroom-challenge.html">Boardroom</a>
+  </div>
+  <div class="landing-nav-meta">
+    <span class="streak">🔥 7-day streak</span>
+    <span>✦ 2,340 XP</span>
+  </div>
+</nav>
 
-<div class="app-shell">
+<!-- ===== Crumb strip ===== -->
+<div class="crumb-strip">
+  <span>Course</span>
+  <span class="sep">›</span>
+  <span>Module 2 · Architecture</span>
+  <span class="sep">›</span>
+  <span class="here">Lesson 2.1</span>
+</div>
 
-  <!-- =================== SIDEBAR =================== -->
-  <aside class="sidebar">
-    <div class="sidebar-logo">
-      <div class="sidebar-logo-mark">P</div>
-      <div>
-        <div class="sidebar-logo-text">Prompt Professor</div>
-        <div class="sidebar-logo-sub">The Best Course. Believe Me.</div>
+<!-- ===== Hero ===== -->
+<section class="lesson-hero">
+  <span class="hero-eyebrow">✦ Module 2 · Lesson 2.1 ✦</span>
+  <h1 class="hero-title">
+    The <span class="gold">R-G-C-F</span><br>
+    Stack.
+  </h1>
+  <p class="hero-subtitle">
+    Four words. Four layers. The architecture every great prompt is built on — and every loser prompt forgets.
+  </p>
+  <div class="hero-meta">
+    <span><strong>⏱ 8</strong> min read</span>
+    <span>·</span>
+    <span><strong>✦ 120</strong> XP on completion</span>
+    <span>·</span>
+    <span><strong>3</strong> checkpoints</span>
+  </div>
+</section>
+
+<!-- ===== Tutor intro (pullquote style) ===== -->
+<section class="section" style="margin-top: 0;">
+  <div class="trump-pullquote">
+    <div class="pullquote-body">
+      Folks, let me tell you — most people write prompts like they're ordering a sandwich with their eyes closed. SAD! But not you. Not after today. Today you learn the <em style="color: var(--gold-700);">only</em> four pieces that matter. Tremendous pieces. The best.
+    </div>
+    <div class="pullquote-attr">
+      <div class="pullquote-avatar">
+        <img src="assets/trump-avatar.png" alt="Mr. Trump" width="48" height="48" style="display:block; width:100%; height:100%; object-fit:cover; object-position:68% 18%;">
+      </div>
+      <div style="text-align: left;">
+        <div class="pullquote-name">Mr. Trump</div>
+        <div class="pullquote-role">Your Tutor · Lesson Intro</div>
       </div>
     </div>
+  </div>
+</section>
 
-    <div class="tutor-chip">
-      <div class="tutor-chip-avatar">
-        <img src="assets/avatar-placeholder.svg" alt="" width="40" height="40" style="display:block;">
-      </div>
-      <div class="tutor-chip-info">
-        <div class="tutor-chip-label">Your Tutor</div>
-        <div class="tutor-chip-name">Mr. Trump</div>
-      </div>
+<!-- ===== Lesson Focus ===== -->
+<section class="section">
+  <div class="section-header">
+    <span class="eyebrow">Lesson Focus</span>
+    <h2 class="section-title">What you'll <span class="gold">master</span></h2>
+  </div>
+  <p class="lesson-prose">
+    Every high-performing prompt has four layers, stacked in a specific order: <strong>Role</strong>, <strong>Goal</strong>, <strong>Constraints</strong>, and <strong>Format</strong>. Miss any one of them and the AI guesses. When the AI guesses, <em>you lose</em>.
+  </p>
+  <p class="lesson-prose">
+    By the end of this lesson you'll be able to inspect any prompt in the wild and call out exactly which layer is weak — and fix it in under sixty seconds.
+  </p>
+</section>
+
+<!-- ===== The Teach (before/after diff) ===== -->
+<section class="section wide">
+  <div class="section-header">
+    <span class="eyebrow">The Teach</span>
+    <h2 class="section-title">See the four layers <span class="gold">in action</span></h2>
+    <p class="section-subtitle">Same request, two very different outcomes. Hover the highlighted lines on the right to see <em>why</em> each addition matters.</p>
+  </div>
+
+  <div class="diff">
+    <div class="diff-pane before">
+      <div class="diff-pane-header">✗ Loser Prompt</div>
+      <div class="diff-pane-body">write me a marketing email for our new product launch</div>
     </div>
-
-    <nav class="sidebar-nav">
-      <div class="sidebar-nav-heading">Course</div>
-
-      <div class="nav-module-group">
-        <div class="nav-item nav-module completed">Module 1 — Foundation</div>
-        <div class="nav-sublessons">
-          <div class="nav-item completed">1.1 What a prompt really is</div>
-          <div class="nav-item completed">1.2 Context hierarchy</div>
-          <div class="nav-item completed">1.3 Clarity &amp; specificity</div>
-          <div class="nav-item completed">1.4 Intent alignment</div>
-        </div>
-      </div>
-
-      <div class="nav-module-group">
-        <div class="nav-item nav-module">Module 2 — Architecture</div>
-        <div class="nav-sublessons">
-          <div class="nav-item active">2.1 The R-G-C-F Stack</div>
-          <div class="nav-item">2.2 XML / JSON / Markdown</div>
-          <div class="nav-item">2.3 Cross-model tone</div>
-        </div>
-      </div>
-
-      <div class="nav-module-group">
-        <div class="nav-item nav-module">Module 3 — Applied Practice</div>
-      </div>
-      <div class="nav-module-group">
-        <div class="nav-item nav-module">Module 4 — Debugging</div>
-      </div>
-      <div class="nav-module-group">
-        <div class="nav-item nav-module">Module 5 — System Design</div>
-      </div>
-      <div class="nav-module-group">
-        <div class="nav-item nav-module">Module 6 — Library Mastery</div>
-      </div>
-
-      <div class="sidebar-nav-heading" style="margin-top: var(--space-6)">Tools</div>
-      <div class="nav-item">📚 Prompt Library <span style="margin-left:auto; font-size:11px; color:var(--gold-600)">24</span></div>
-      <div class="nav-item">🏛 Failure Museum</div>
-      <div class="nav-item">⚡ Playground</div>
-      <div class="nav-item">⚙ Settings</div>
-    </nav>
-  </aside>
-
-  <!-- =================== MAIN =================== -->
-  <div>
-    <!-- Top bar -->
-    <header class="topbar">
-      <div class="breadcrumbs">
-        <span>Course</span>
-        <span class="separator">›</span>
-        <span>Module 2</span>
-        <span class="separator">›</span>
-        <span class="current">2.1 The R-G-C-F Stack</span>
-      </div>
-      <div class="topbar-right">
-        <div class="streak-flame" title="7-day streak">
-          <span class="flame">🔥</span>
-          <span>7</span>
-        </div>
-        <div class="xp-counter">
-          <span>XP</span>
-          <span class="xp-value">2,340</span>
-        </div>
-        <div class="avatar-menu" title="Profile">JS</div>
-      </div>
-    </header>
-
-    <main class="main">
-
-      <!-- ============ Lesson header ============ -->
-      <div class="lesson-section" style="margin-top: 0;">
-        <div class="lesson-section-eyebrow">Module 2 · Lesson 2.1</div>
-        <h1 class="display display-1" style="margin-bottom: var(--space-4);">The R-G-C-F Stack</h1>
-        <p class="lesson-prose" style="font-size: var(--text-xl); max-width: 720px;">
-          Four words. Four layers. The architecture every great prompt is built on — and every loser prompt forgets.
-        </p>
-        <div class="flex items-center gap-4 mt-6" style="color: var(--text-tertiary); font-size: var(--text-sm);">
-          <span>⏱ 8 min read</span>
-          <span>·</span>
-          <span>✦ 120 XP</span>
-          <span>·</span>
-          <span>3 checkpoints</span>
-        </div>
-      </div>
-
-      <!-- ============ Tutor intro card ============ -->
-      <div class="tutor-card deco-corners" style="margin-bottom: var(--space-12);">
-        <div class="tutor-card-avatar">
-          <img src="assets/avatar-placeholder.svg" alt="Mr. Trump, your tutor" width="72" height="72" style="display:block;">
-        </div>
-        <div class="tutor-card-body">
-          <div class="flex items-center gap-3">
-            <span class="tutor-card-name">Mr. Trump</span>
-            <span class="tutor-card-role">Your Tutor · Lesson Intro</span>
-          </div>
-          <p class="tutor-card-quote">
-            "Folks, let me tell you — most people write prompts like they're ordering a sandwich with their eyes closed. SAD! But not you. Not after today. Today you learn the <em style="color: var(--gold-700);">only</em> four pieces that matter. Tremendous pieces. The best."
-          </p>
-        </div>
-      </div>
-
-      <!-- ============ Lesson Focus ============ -->
-      <section class="lesson-section">
-        <header class="lesson-section-header">
-          <div class="lesson-section-eyebrow">Lesson Focus</div>
-          <h2 class="lesson-section-title">What you'll master</h2>
-        </header>
-        <p class="lesson-prose">
-          Every high-performing prompt has four layers, stacked in a specific order: <strong>Role</strong>, <strong>Goal</strong>, <strong>Constraints</strong>, and <strong>Format</strong>. Miss any one of them and the AI guesses. And when the AI guesses, <em>you lose</em>. By the end of this lesson you'll be able to inspect any prompt and call out exactly which layer is weak — and fix it.
-        </p>
-      </section>
-
-      <!-- ============ Teach section with diff ============ -->
-      <section class="lesson-section">
-        <header class="lesson-section-header">
-          <div class="lesson-section-eyebrow">The Teach</div>
-          <h2 class="lesson-section-title">See the four layers in action</h2>
-        </header>
-        <p class="lesson-prose" style="margin-bottom: var(--space-6);">
-          Here's a real before/after. Same request, two very different outcomes. Hover the highlighted parts on the right to see <em>why</em> each addition matters.
-        </p>
-
-        <div class="diff">
-          <div class="diff-pane before">
-            <div class="diff-pane-header">✗ Loser Prompt</div>
-            <div class="diff-pane-body">write me a marketing email for our new product launch</div>
-          </div>
-          <div class="diff-pane after">
-            <div class="diff-pane-header">✓ Trump Version</div>
-            <div class="diff-pane-body"><span class="diff-highlight-add" title="ROLE — tells the AI who to be. Specialist role beats generic 'you are a helpful assistant' every time.">You are a senior B2B SaaS marketing copywriter with 10 years of experience writing for technical buyers.</span>
+    <div class="diff-pane after">
+      <div class="diff-pane-header">✓ Trump Version</div>
+      <div class="diff-pane-body"><span class="diff-highlight-add" title="ROLE — tells the AI who to be. Specialist role beats generic 'you are a helpful assistant' every time.">You are a senior B2B SaaS marketing copywriter with 10 years of experience writing for technical buyers.</span>
 
 <span class="diff-highlight-add" title="GOAL — exactly what outcome. Not just 'an email' — a specific outcome.">Write a product launch email that drives demo bookings from engineering leads at companies with 50+ engineers.</span>
 
@@ -188,173 +570,182 @@
 - Opening hook (one sentence)
 - Body (2 short paragraphs)
 - CTA (one line, no exclamation)</span></div>
-          </div>
-        </div>
-
-        <p class="lesson-prose" style="margin-top: var(--space-6);">
-          <strong>Notice:</strong> each layer lands before the next. Role first (tells the AI <em>who</em> it is). Goal second (<em>what</em> to do). Constraints third (<em>how not</em> to do it wrong). Format last (<em>what shape</em> the output takes). Reorder these and quality drops — it's worth testing this for yourself in the playground.
-        </p>
-      </section>
-
-      <!-- ============ Try it ============ -->
-      <section class="lesson-section">
-        <header class="lesson-section-header">
-          <div class="lesson-section-eyebrow">Try it · Boardroom Challenge</div>
-          <h2 class="lesson-section-title">You're in the boardroom.</h2>
-        </header>
-        <div class="card card-gold-border" style="padding: var(--space-8);">
-          <p class="quote-pullout" style="margin-bottom: var(--space-5);">
-            Write me a prompt that turns a meandering Slack conversation into a crisp executive summary. Use all four layers. Show your work.
-          </p>
-          <textarea placeholder="Role: You are..." style="width:100%; min-height:160px; padding:var(--space-4); background:var(--charcoal-950); color:var(--text-primary); border:1px solid var(--border-subtle); border-radius:var(--radius-md); font-family:var(--font-mono); font-size:var(--text-sm); line-height:var(--leading-relaxed); resize:vertical;"></textarea>
-          <div class="flex justify-between items-center mt-4">
-            <span class="text-secondary" style="font-size: var(--text-sm);">Mr. Trump will grade this. Make it tremendous.</span>
-            <button class="btn btn-primary">Submit for Review →</button>
-          </div>
-        </div>
-      </section>
-
-      <!-- ============ Quiz ============ -->
-      <section class="lesson-section">
-        <header class="lesson-section-header">
-          <div class="lesson-section-eyebrow">Checkpoint</div>
-          <h2 class="lesson-section-title">Quick check — do you know the stack?</h2>
-        </header>
-
-        <div class="quiz-question">
-          <div class="quiz-prompt">Which layer is this line? <code style="font-family:var(--font-mono); background:var(--charcoal-950); padding:2px 6px; border-radius:4px; color:var(--gold-600);">"Respond in JSON with keys: summary, sentiment, action_items."</code></div>
-          <div class="quiz-options">
-            <button class="quiz-option">
-              <span class="quiz-option-marker">A</span>
-              <span>Role — it tells the AI who to be.</span>
-            </button>
-            <button class="quiz-option">
-              <span class="quiz-option-marker">B</span>
-              <span>Goal — it states the outcome.</span>
-            </button>
-            <button class="quiz-option">
-              <span class="quiz-option-marker">C</span>
-              <span>Constraints — it limits what's allowed.</span>
-            </button>
-            <button class="quiz-option selected correct">
-              <span class="quiz-option-marker">D</span>
-              <span>Format — it defines the output shape.</span>
-            </button>
-          </div>
-          <div class="card" style="margin-top: var(--space-4); background: rgba(45, 90, 63, 0.08); border-color: var(--forest-500);">
-            <div class="flex items-center gap-3" style="margin-bottom: var(--space-2);">
-              <span class="tag green">Correct</span>
-              <span style="color: var(--gold-700); font-family: var(--font-display); font-weight: 700;">"That's right! You're hired!"</span>
-            </div>
-            <p style="font-size: var(--text-sm); color: var(--text-secondary);">
-              JSON keys define the <em>shape</em> the AI fills in — that's Format. If the line said "only respond in JSON, never plain text," it'd be a Constraint. Subtle. Important.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <!-- ============ Key Takeaways ============ -->
-      <section class="lesson-section">
-        <div class="key-takeaways deco-corners">
-          <div class="key-takeaways-title">Key Takeaways</div>
-          <ul class="key-takeaways-list">
-            <li>Every strong prompt has four layers: <strong>Role, Goal, Constraints, Format</strong> — in that order.</li>
-            <li><strong>Role</strong> sets perspective. <strong>Goal</strong> sets outcome. <strong>Constraints</strong> prevent slop. <strong>Format</strong> defines output shape.</li>
-            <li>When a prompt underperforms, diagnose which layer is missing before rewriting — 80% of the time it's Constraints or Format.</li>
-            <li>Order matters: swapping the layers degrades results measurably across Claude, GPT, and Gemini.</li>
-          </ul>
-        </div>
-      </section>
-
-      <!-- ============ Debugging Notes ============ -->
-      <section class="lesson-section">
-        <header class="lesson-section-header">
-          <div class="lesson-section-eyebrow">Debugging Notes</div>
-          <h2 class="lesson-section-title">Watch out for these</h2>
-        </header>
-        <div class="flex flex-col gap-3">
-          <div class="card">
-            <div class="flex items-center gap-3 mb-2">
-              <span class="tag burgundy">Common Mistake</span>
-              <strong style="color: var(--text-primary);">Fused Role + Goal</strong>
-            </div>
-            <p class="text-secondary" style="font-size: var(--text-sm);">"You are a marketing expert and write an email about X" — the AI treats this as one instruction, and loses the specificity that comes from separating <em>who</em> from <em>what</em>.</p>
-          </div>
-          <div class="card">
-            <div class="flex items-center gap-3 mb-2">
-              <span class="tag burgundy">Common Mistake</span>
-              <strong style="color: var(--text-primary);">Implicit Format</strong>
-            </div>
-            <p class="text-secondary" style="font-size: var(--text-sm);">Asking "summarize this" without specifying shape. The model will guess — bullets, paragraphs, numbered list — and you'll get a different shape every run. Bad for downstream parsing.</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- ============ Mastery Checklist ============ -->
-      <section class="lesson-section">
-        <header class="lesson-section-header">
-          <div class="lesson-section-eyebrow">Mastery Checklist</div>
-          <h2 class="lesson-section-title">Tick these when they're true</h2>
-        </header>
-        <div class="checklist">
-          <label class="checklist-item checked">
-            <span class="checklist-check"></span>
-            <span>I can name the four layers of R-G-C-F without looking them up.</span>
-          </label>
-          <label class="checklist-item checked">
-            <span class="checklist-check"></span>
-            <span>I can label each layer in an existing prompt.</span>
-          </label>
-          <label class="checklist-item">
-            <span class="checklist-check"></span>
-            <span>I wrote one R-G-C-F prompt in the playground and ran it successfully.</span>
-          </label>
-          <label class="checklist-item">
-            <span class="checklist-check"></span>
-            <span>I saved one strong R-G-C-F example to my Prompt Library.</span>
-          </label>
-        </div>
-      </section>
-
-      <!-- ============ Tutor outro card ============ -->
-      <div class="tutor-card" style="margin-top: var(--space-16); border-color: var(--gold-500);">
-        <div class="tutor-card-avatar">
-          <img src="assets/avatar-placeholder.svg" alt="Mr. Trump, your tutor" width="72" height="72" style="display:block;">
-        </div>
-        <div class="tutor-card-body">
-          <div class="flex items-center gap-3">
-            <span class="tutor-card-name">Mr. Trump</span>
-            <span class="tutor-card-role">Your Tutor · Lesson Outro</span>
-          </div>
-          <p class="tutor-card-quote">
-            "Beautiful. Just beautiful. You learned R-G-C-F. Four layers. The best architecture there is. Nobody does it better than people who know these four layers — believe me. You just learned something <em style="color: var(--gold-700);">huge</em>. Now go use it and win bigly."
-          </p>
-          <div class="flex gap-3 mt-4">
-            <button class="btn btn-secondary btn-sm">Save R-G-C-F template to Library</button>
-            <button class="btn btn-ghost btn-sm">Share this lesson</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ============ Lesson footer nav ============ -->
-      <div class="lesson-footer-nav">
-        <div class="flex items-center gap-3">
-          <button class="btn btn-ghost">← Previous</button>
-          <span style="font-size: var(--text-xs); color: var(--text-tertiary);">
-            <span class="kbd">←</span> 1.4 Intent alignment
-          </span>
-        </div>
-        <div class="flex items-center gap-3">
-          <span style="font-size: var(--text-xs); color: var(--text-tertiary);">
-            2.2 XML / JSON / Markdown <span class="kbd">→</span>
-          </span>
-          <button class="btn btn-primary">Next Lesson →</button>
-        </div>
-      </div>
-
-    </main>
+    </div>
   </div>
-</div>
+
+  <p class="lesson-prose" style="margin-top: var(--space-8); text-align: center; max-width: 720px; margin-left: auto; margin-right: auto;">
+    Each layer lands before the next. Role first (who). Goal second (what). Constraints third (how <em>not</em> to). Format last (what shape). Reorder these and quality drops measurably.
+  </p>
+</section>
+
+<!-- ===== Try it · Boardroom Challenge ===== -->
+<section class="section">
+  <div class="section-header">
+    <span class="eyebrow">Try it · Boardroom Challenge</span>
+    <h2 class="section-title">You're in the <span class="gold">boardroom</span>.</h2>
+  </div>
+  <div class="challenge-card">
+    <div class="challenge-quote">
+      Write me a prompt that turns a meandering Slack conversation into a crisp executive summary. Use all four layers. Show your work.
+    </div>
+    <textarea class="challenge-textarea" placeholder="Role: You are...&#10;&#10;Goal: ...&#10;&#10;Constraints: ...&#10;&#10;Format:"></textarea>
+    <div class="challenge-footer">
+      <span style="font-size: var(--text-sm); color: var(--text-tertiary);">Mr. Trump will grade this. Make it tremendous.</span>
+      <button class="btn btn-primary">Submit for Review →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Quiz Checkpoint ===== -->
+<section class="section">
+  <div class="section-header">
+    <span class="eyebrow">Checkpoint</span>
+    <h2 class="section-title">Do you <span class="gold">know</span> the stack?</h2>
+  </div>
+  <div class="quiz-card">
+    <div class="quiz-prompt">
+      Which layer is this line?<br>
+      <code>"Respond in JSON with keys: summary, sentiment, action_items."</code>
+    </div>
+    <div class="quiz-options">
+      <button class="quiz-option">
+        <span class="quiz-option-marker">A</span>
+        <span>Role — it tells the AI who to be.</span>
+      </button>
+      <button class="quiz-option">
+        <span class="quiz-option-marker">B</span>
+        <span>Goal — it states the outcome.</span>
+      </button>
+      <button class="quiz-option">
+        <span class="quiz-option-marker">C</span>
+        <span>Constraints — it limits what's allowed.</span>
+      </button>
+      <button class="quiz-option correct selected">
+        <span class="quiz-option-marker">D</span>
+        <span>Format — it defines the output shape.</span>
+      </button>
+    </div>
+    <div class="quiz-feedback">
+      <div class="quiz-verdict">"That's right! You're hired!"</div>
+      <p style="font-size: var(--text-base); color: var(--text-secondary); margin: 0;">
+        JSON keys define the <em>shape</em> the AI fills in — that's Format. If the line said "only respond in JSON, never plain text," it'd be a Constraint. Subtle. Important.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Key Takeaways ===== -->
+<section class="section">
+  <div class="section-header">
+    <span class="eyebrow">Key Takeaways</span>
+    <h2 class="section-title">The four things to <span class="gold">remember</span></h2>
+  </div>
+  <div class="bullet-card">
+    <ul class="bullet-list">
+      <li>Every strong prompt has four layers: <strong>Role, Goal, Constraints, Format</strong> — in that order.</li>
+      <li><strong>Role</strong> sets perspective. <strong>Goal</strong> sets outcome. <strong>Constraints</strong> prevent slop. <strong>Format</strong> defines output shape.</li>
+      <li>When a prompt underperforms, diagnose which layer is missing before rewriting — 80% of the time it's Constraints or Format.</li>
+      <li>Order matters: swapping the layers degrades results measurably across Claude, GPT, and Gemini.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===== Debugging Notes ===== -->
+<section class="section">
+  <div class="section-header">
+    <span class="eyebrow">Debugging Notes</span>
+    <h2 class="section-title">Watch out for <span class="gold">these</span></h2>
+  </div>
+  <div class="debug-grid">
+    <div class="debug-item">
+      <span class="debug-tag">Common Mistake</span>
+      <div class="debug-title">Fused Role + Goal</div>
+      <div class="debug-body">"You are a marketing expert and write an email about X" — the AI treats this as one instruction and loses the specificity that comes from separating <em>who</em> from <em>what</em>.</div>
+    </div>
+    <div class="debug-item">
+      <span class="debug-tag">Common Mistake</span>
+      <div class="debug-title">Implicit Format</div>
+      <div class="debug-body">Asking "summarize this" without specifying shape. The model will guess — bullets, paragraphs, numbered list — and you'll get a different shape every run. Bad for downstream parsing.</div>
+    </div>
+    <div class="debug-item">
+      <span class="debug-tag">Common Mistake</span>
+      <div class="debug-title">Constraint inflation</div>
+      <div class="debug-body">Stacking more than five constraints starts to fight the Goal. If a constraint conflicts with the outcome, the model picks one and silently drops the other. Keep constraints few, sharp, and prioritized.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Mastery Checklist ===== -->
+<section class="section">
+  <div class="section-header">
+    <span class="eyebrow">Mastery Checklist</span>
+    <h2 class="section-title">Tick these when they're <span class="gold">true</span></h2>
+  </div>
+  <div class="checklist">
+    <div class="check-row checked">
+      <div class="check-box"></div>
+      <div class="check-label">I can name the four layers of R-G-C-F without looking them up.</div>
+    </div>
+    <div class="check-row checked">
+      <div class="check-box"></div>
+      <div class="check-label">I can label each layer in an existing prompt.</div>
+    </div>
+    <div class="check-row">
+      <div class="check-box"></div>
+      <div class="check-label">I wrote one R-G-C-F prompt in the playground and ran it successfully.</div>
+    </div>
+    <div class="check-row">
+      <div class="check-box"></div>
+      <div class="check-label">I saved one strong R-G-C-F example to my Prompt Library.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Tutor outro (pullquote style) ===== -->
+<section class="section">
+  <div class="trump-pullquote">
+    <div class="pullquote-body">
+      Beautiful. Just beautiful. You learned R-G-C-F. Four layers. The best architecture there is. Nobody does it better than people who know these four layers — <em style="color: var(--gold-700);">believe me</em>. You just learned something huge. Now go use it and win bigly.
+    </div>
+    <div class="pullquote-attr">
+      <div class="pullquote-avatar">
+        <img src="assets/trump-avatar.png" alt="Mr. Trump" width="48" height="48" style="display:block; width:100%; height:100%; object-fit:cover; object-position:68% 18%;">
+      </div>
+      <div style="text-align: left;">
+        <div class="pullquote-name">Mr. Trump</div>
+        <div class="pullquote-role">Your Tutor · Lesson Outro</div>
+      </div>
+    </div>
+    <div style="display:flex; gap: var(--space-3); justify-content: center; margin-top: var(--space-6);">
+      <button class="btn btn-primary btn-sm">Save R-G-C-F template to Library</button>
+      <button class="btn btn-ghost btn-sm">Share this lesson</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Prev / Next ===== -->
+<nav class="lesson-end-nav">
+  <a href="#" class="prev">
+    <span class="lesson-end-label">← Previous · Module 1.4</span>
+    <span class="lesson-end-title">Intent alignment</span>
+  </a>
+  <a href="#" class="next">
+    <span class="lesson-end-label">Next · Module 2.2 →</span>
+    <span class="lesson-end-title">XML / JSON / Markdown</span>
+  </a>
+</nav>
+
+<!-- ===== Footer ===== -->
+<footer class="page-footer">
+  <div>
+    <strong style="color: var(--gold-600); font-family: var(--font-display);">Prompt Professor</strong> · The best course. Believe me.
+  </div>
+  <div style="display:flex; gap: var(--space-6);">
+    <a href="index.html">Design Gallery</a>
+    <a href="landing.html">Course Home</a>
+    <a href="#">GitHub</a>
+  </div>
+</footer>
 
 <!-- Theme toggle -->
 <button class="theme-toggle" onclick="toggleTheme()">
@@ -369,16 +760,17 @@
     html.setAttribute('data-theme', next);
     document.getElementById('theme-label').textContent = next === 'dark' ? '☾ Dark' : '☀ Light';
   }
-  // Draw progress rings / checklist interactions (minimal)
-  document.querySelectorAll('.checklist-item').forEach(item => {
-    item.addEventListener('click', (e) => {
+  document.querySelectorAll('.check-row').forEach(row => {
+    row.addEventListener('click', (e) => {
       e.preventDefault();
-      item.classList.toggle('checked');
+      row.classList.toggle('checked');
     });
   });
   document.querySelectorAll('.quiz-option').forEach(opt => {
     opt.addEventListener('click', () => {
-      opt.parentElement.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected'));
+      const group = opt.closest('.quiz-options');
+      if (!group) return;
+      group.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected'));
       opt.classList.add('selected');
     });
   });
